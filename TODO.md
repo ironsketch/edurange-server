@@ -2,8 +2,6 @@
 
 ## Server
 
-- **Add 'forgot my password' link on the signing page**
-
 - Scenario script editor
 
   - User nice editor (google 'CodeMirror')
