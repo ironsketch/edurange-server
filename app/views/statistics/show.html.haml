@@ -1,34 +1,49 @@
 = javascript_include_tag "//www.google.com/jsapi", "chartkick"
 %div.panel.panel-default
-    %div.panel-heading.nav-nav-pills
-        %h4
-            %b
-                %span#scenario-name
-                    = @statistic.scenario_name
-                    = "created at: "
-                    = @statistic.created_at
-    %div.panel-heading.nav.nav-pills
-        %li.dropdown#action-dropdown
-            %a.dropdown-toggle{ "data-toggle" => "dropdown", href: "#", role: "button", "aria-expanded" => "false"}
-            Users
-            = select_tag :users, options_for_select(@users)
-        %br
-        %button{onclick:"request_graph(#{@statistic_id});", class: 'btn btn-default'} Generate Analytics
+  %div.panel-heading.nav-nav-pills
+    %h4
+      %b
+        %span#scenario-name
+          = @statistic.scenario_name
+          = "created at: "
+          = @statistic.created_at
+  %div.panel-heading.nav.nav-pills
+    = form_tag generate_analytics_statistic_path(@statistic), remote: true, method: :post, id: 'generate_analytics_form' do 
+      = label_tag 'Instance:'
+      = select_tag :instances, options_for_select(@statistic.instance_names), onchange: "instance_users(#{@statistic.id});"
+      = label_tag 'User:'
+      = select_tag :users, options_for_select(@instance_first_users), onchange: "update_button_values(#{@statistic.id})"
+
+    = form_tag download_instance_user_bash_history_statistic_path(@statistic), method: :post, id: 'download_instance_user_bash_history_form' do
+      = hidden_field_tag 'instance_name'
+      = hidden_field_tag 'user_name'
+      = submit_tag 'Download Instance User Bash History', :class => 'btn btn-default'
+
+    = form_tag download_instance_exit_statuses_statistic_path(@statistic), method: :post, id: 'download_instance_exit_statuses_form' do
+      = hidden_field_tag 'instance_name'
+      = submit_tag 'Download Instance Exit Statuses', :class => 'btn btn-default'
+
+    = form_tag download_instance_script_logs_statistic_path(@statistic), method: :post, id: 'download_instance_script_logs_form' do
+      = hidden_field_tag 'instance_name'
+      = submit_tag 'Download Instance Script Logs', :class => 'btn btn-default'
+
+    = form_tag download_all_statistic_path(@statistic), method: :post, id: 'download_all_form' do
+      = submit_tag 'Download All', :class => 'btn btn-default'
+
+    = link_to 'Destroy Statistic', destroyme_statistic_path(@statistic), method: :post, remote: true, :data => { :confirm => 'Are you sure?' }, class: 'btn btn-default'
+
+  %div.panel.panel-body
+    %h3#analytic-header
     %div{ "id" => "chart", "style" => "height: 300px"}
-    %div.indent.panel-body    
-        // Instructions
-        %label
-            %div.panel.panel-body
-                = link_to 'Download Bash History', download_bash_history_statistic_path(@statistic), class: 'btn btn-default'
-                = link_to 'Download Exit Status', download_exit_status_statistic_path(@statistic), class: 'btn btn-default'
-                = link_to 'Download Script Log', download_script_log_statistic_path(@statistic), class: 'btn btn-default'
-                = link_to 'All Statistics', statistics_path, class: 'btn btn-default'
-                = link_to 'Destroy Statistic', destroyme_statistic_path(@statistic), method: :post, remote: true, :data => { :confirm => 'Are you sure?' }, class: 'btn btn-default'
-            // Uses regular expressions to display bash history nicely, converting the unix timestamp into a readable time
-            %div.panel.panel-body{id: "bash-histories-field"}
-                %h3 Bash Histories
-                - history_lines = @statistic.bash_histories.split(/#/)
-                - history_lines.each do |line|
-                    %br
-                    = if /\d\d\d\d\d\d\d\d\d\d.*/.match(line) then Time.at(Integer(line[0..10])).strftime("%I:%M %p") + ' ' + line[11..-1] else line end
+
+  %div.panel.panel-body{id: "bash-histories-field"}
+    %h3 Bash History
+    %dl
+      %div#bash-history-instance-user
+    / - history_lines = @statistic.bash_histories.split(/#/)
+    / - history_lines.each do |line|
+    /   %br
+    /   = if /\d\d\d\d\d\d\d\d\d\d.*/.match(line) then Time.at(Integer(line[0..10])).strftime("%I:%M %p") + ' ' + line[11..-1] else line end
             
+%script
+  = "update_button_values(#{@statistic.id})"

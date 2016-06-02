@@ -39,6 +39,7 @@ config/environments/*.local.yml
 scenarios/custom/*
 
 keys/*
+data/*
 
 .ruby-version
 ._.DS_Store

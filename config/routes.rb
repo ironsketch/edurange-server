@@ -29,12 +29,18 @@ Edurange::Application.routes.draw do
       # destorying statistics
       post 'destroyme'
       # downloading statistics
+      post 'download_instance_user_bash_history'
+      post 'download_instance_exit_statuses'
+      post 'download_instance_script_logs'
+      post 'download_all'
+
       get 'download_bash_history'
       get 'download_exit_status'
       get 'download_script_log'
-      get 'download_all'  
+        
       # analytics, complicated query params
-      get 'generate_analytics' 
+      post 'generate_analytics' 
+      get 'instance_users'
     end
   end
   

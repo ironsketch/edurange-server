@@ -45,7 +45,7 @@
               %div.nav.nav-pills
                 %li
                   = simple_form_for(@scenario) do |f|
-                    = f.hidden_field :name, :value => template[:filename]
+                    = f.hidden_field :name, :value => template[:name]
                     = f.hidden_field :location, :value => template[:location]
                     = f.button :submit, 'Create ' + template[:name], class: 'btn btn-primary'
                 %li

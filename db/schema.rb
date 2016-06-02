@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160115194021) do
+ActiveRecord::Schema.define(version: 20160523211228) do
 
   create_table "answers", force: :cascade do |t|
     t.boolean  "correct"
@@ -37,6 +37,7 @@ ActiveRecord::Schema.define(version: 20160115194021) do
     t.datetime "updated_at"
     t.integer  "status",      default: 0
     t.string   "log",         default: ""
+    t.string   "boot_code",   default: ""
   end
 
   add_index "clouds", ["scenario_id"], name: "index_clouds_on_scenario_id"
@@ -106,6 +107,7 @@ ActiveRecord::Schema.define(version: 20160115194021) do
     t.string   "exit_status_page",    default: ""
     t.string   "script_log_page",     default: ""
     t.string   "ip_address_dynamic",  default: ""
+    t.string   "boot_code",           default: ""
   end
 
   add_index "instances", ["subnet_id"], name: "index_instances_on_subnet_id"
@@ -183,6 +185,7 @@ ActiveRecord::Schema.define(version: 20160115194021) do
     t.integer  "location",              default: 0
     t.boolean  "modifiable",            default: false
     t.string   "aws_prefixes"
+    t.string   "boot_code",             default: ""
   end
 
   create_table "statistics", force: :cascade do |t|
@@ -195,6 +198,8 @@ ActiveRecord::Schema.define(version: 20160115194021) do
     t.datetime "scenario_created_at"
     t.string   "script_log",          default: ""
     t.string   "exit_status",         default: ""
+    t.integer  "scenario_id"
+    t.string   "resource_info"
   end
 
   create_table "student_group_users", force: :cascade do |t|
@@ -221,6 +226,7 @@ ActiveRecord::Schema.define(version: 20160115194021) do
     t.datetime "updated_at"
     t.integer  "status",              default: 0
     t.string   "log",                 default: ""
+    t.string   "boot_code",           default: ""
   end
 
   add_index "subnets", ["cloud_id"], name: "index_subnets_on_cloud_id"

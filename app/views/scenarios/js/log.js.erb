@@ -1,4 +1,2 @@
-$('#<%= @dropdown %>').removeClass('open');
 $('#modal-log').modal('show');
-$('#modal-log').find('#modal-log-name').text("<%= @name %>");
 $('#modal-log').find('#modalbody').html("<%= escape_javascript(@htmllog) %>");

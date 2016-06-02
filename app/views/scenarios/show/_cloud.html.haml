@@ -17,9 +17,6 @@
             = link_to 'Modify', "#modal-cloud-modify", :data => {:toggle=>"modal"}, :onclick => "$('#modal-cloud-modify').find('#modal-title').text($('#cloud-#{cloud.id}-name').html().trim()); $('#modal-cloud-modify').find('#cloud_id').val('#{cloud.id}'); $('#modal-cloud-modify').find('#name').val($('#cloud-#{cloud.id}-name').html().trim()); $('#modal-cloud-modify').find('#cidr_block').val($('#cloud-#{cloud.id}-cidr').html().trim()); $('#modal-cloud-modify').find('#name-div').removeClass('has-error'); $('#modal-cloud-modify').find('#name-help').html(''); $('#modal-cloud-modify').find('#cidr-div').removeClass('has-error'); $('#modal-cloud-modify').find('#cidr-help').html(''); $('#modal-cloud-modify').find('#help-div').removeClass('has-error'); $('#modal-cloud-modify').find('#help-help').html('');", id: "cloud-#{cloud.id}-modify-button"
         %li{ id: "cloud-#{cloud.id}-delete-button-li", class: cloud.stopped? ? "" : "disabled" }
           = link_to 'Delete', cloud_delete_scenario_path(cloud_id: cloud), method: :post, remote: true, id: "cloud-#{cloud.id}-delete-button"
-        %li.divider
-        %li
-          = link_to 'Show Log', log_get_scenario_path(cloud, kind: 'cloud'), method: :post, remote: true
   %br
   Status:
   %span{ id: "cloud-#{cloud.id}-status" }

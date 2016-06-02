@@ -46,22 +46,6 @@ class Cloud < ActiveRecord::Base
     true
   end
 
-  def bootable?
-    return self.stopped? 
-  end
-
-  def unbootable?
-    return (self.booted? or self.boot_failed? or self.unboot_failed?)
-  end
-
-  # @param message The message to print to the {Scenario}'s boot view
-  # @return [nil]
-  def debug(message)
-    log = self.log ? self.log : ''
-    message = '' if !message
-    self.update_attribute(:log, log + message + "\n")
-  end
-
   def owner?(id)
     return self.scenario.user_id == id
   end
