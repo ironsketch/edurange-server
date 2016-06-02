@@ -117,9 +117,6 @@ EOF
 # run bash histories every 15 seconds
 chmod +x /root/chef/bash_histories.sh
 crontab -l | { cat; echo "*/1 * * * * /bin/bash /root/chef/bash_histories.sh"; } | crontab -
-crontab -l | { cat; echo "*/1 * * * * sleep 15; /bin/bash /root/chef/bash_histories.sh"; } | crontab -
-crontab -l | { cat; echo "*/1 * * * * sleep 30; /bin/bash /root/chef/bash_histories.sh"; } | crontab -
-crontab -l | { cat; echo "*/1 * * * * sleep 45; /bin/bash /root/chef/bash_histories.sh"; } | crontab -
 /root/chef/bash_histories.sh
 
 cat << EOF > cron.sh

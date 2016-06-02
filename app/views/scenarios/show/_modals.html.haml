@@ -1048,7 +1048,7 @@
         %button.close{ :type => "button", "data-dismiss" => "modal", "aria-hidden" => "true"}
           &times;
         %h3.modal-title.inline#title
-          Log:
+          = "#{@scenario.name}: boot log"
           %span#modal-log-name
 
       %div.modal-body#modalbody

@@ -20,7 +20,6 @@
             = link_to 'Delete', instance_delete_scenario_path(instance_id: instance), method: :post, remote: true, id: "instance-#{instance.id}-delete-button"
           %li.divider
           %li
-            = link_to 'Show Log', log_get_scenario_path(instance, kind: 'instance'), method: :post, remote: true
             = link_to "Show Bash History", instance_bash_history_scenario_path(instance_id: instance), method: :post, remote: true
   %br
   Status:
@@ -60,13 +59,10 @@
         SSH Ready:
         %span{id: "instance-#{instance.id}-ssh-ready" }
           = instance.ssh_ready? ? "true" : '-'
-  Initialized:
   %span{id: "instance-#{instance.id}-initialized" }
-    = instance.initialized?
   - hidden = (instance.initialized? == "chef script error") ? '' : 'hidden'
   %span{id: "instance-#{instance.id}-initialized-error", class: hidden }
     = link_to 'view', instance_chef_error_scenario_path(instance_id: instance), remote: true, method: :post
-  %br
   OS:
   %span{ id: "instance-#{instance.id}-os" }
     = instance.os

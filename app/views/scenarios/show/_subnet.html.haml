@@ -17,9 +17,6 @@
             = link_to 'Modify', "#modal-subnet-modify", :data => {:toggle=>"modal"}, :onclick => "$('#modal-subnet-modify').find('#subnet-name').text($('#subnet-#{subnet.id}-name').html().trim()); $('#modal-subnet-modify').find('#subnet_id').val('#{subnet.id}'); $('#modal-subnet-modify').find('#name').val($('#subnet-#{subnet.id}-name').html().trim()); $('#modal-subnet-modify').find('#cidr_block').val($('#subnet-#{subnet.id}-cidr').html().trim()); $('#modal-subnet-modify').find('#internet_accessible').val($('#subnet-#{subnet.id}-internet-accessible').html().trim()); $('#modal-subnet-modify').find('#name-div').removeClass('has-error'); $('#modal-subnet-modify').find('#name-help').html(''); $('#modal-subnet-modify').find('#name-div').removeClass('has-error'); $('#modal-subnet-modify').find('#name-help').html(''); $('#modal-subnet-modify').find('#cidr-div').removeClass('has-error'); $('#modal-subnet-modify').find('#cidr-help').html(''); $('#modal-subnet-modify').find('#internet-accessible-div').removeClass('has-error'); $('#modal-subnet-modify').find('#internet-accessible-help').html(''); $('#modal-subnet-modify').find('#help-div').removeClass('has-error'); $('#modal-subnet-modify').find('#help-help').html('');", id: "subnet-#{subnet.id}-modify-button"
           %li{ id: "subnet-#{subnet.id}-delete-button-li", class: subnet.stopped? ? "" : "disabled" }
             = link_to 'Delete', subnet_delete_scenario_path(subnet_id: subnet), method: :post, remote: true, id: "subnet-#{subnet.id}-delete-button"
-        %li.divider
-        %li
-          = link_to 'Show Log', log_get_scenario_path(subnet, kind: 'subnet'), method: :post, remote: true
   %br
   Status:
   %span{id: "subnet-#{subnet.id}-status" }

@@ -40,7 +40,7 @@ class User < ActiveRecord::Base
   def owns?(obj)
     return true if self.is_admin?
     cl = obj.class
-    arr = [Cloud, Group, Instance, Scenario, StudentGroup, Subnet, InstanceRole, InstanceGroup, Role, RoleRecipe, Recipe, Answer]
+    arr = [Cloud, Group, Instance, Scenario, StudentGroup, Subnet, InstanceRole, InstanceGroup, Role, RoleRecipe, Recipe, Answer, Statistic]
     if arr.include? cl
       return obj.user == self
     elsif cl == Player

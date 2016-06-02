@@ -44,15 +44,23 @@ update_status('scenario', '<%= @scenario.status %>')
       $("#instance-<%= instance.id %>-delete-button-li").attr('class', '<%= @scenario.stopped? ? "" : "disabled" %>');
       $("#instance-<%= instance.id %>-role-add-button-li").attr('class', '<%= @scenario.stopped? ? "" : "disabled" %>');
 
-      update_status('instance-<%= instance.id %>', '<%= instance.status %>');
-
       $("#instance-<%= instance.id %>-driver").text('<%= instance.driver_id ? instance.driver_id : "not set" %>');
       <% if instance.internet_accessible %>
         $("#instance-<%= instance.id %>-public-ip").text('<%= instance.provider_instance_public_ip ? instance.provider_instance_public_ip : "-"  %>');
       <% end %>
       $("#instance-<%= instance.id %>-driver").text('<%= instance.driver_id ? instance.driver_id : "not set" %>');
       $("#instance-<%= instance.id %>-ssh-ready").text('<%= instance.ssh_ready? ? "true" : "-" %>');
-      $("#instance-<%= instance.id %>-initialized").text('<%= instance.initialized? %>');
+
+      <% if instance.booted? %>
+        <% if instance.initialized? == "true" %>
+          update_status('instance-<%= instance.id %>', '<%= instance.status %>');
+        <% else %>
+          update_status('instance-<%= instance.id %>', 'initializing');
+        <% end %>
+      <% else %>
+        update_status('instance-<%= instance.id %>', '<%= instance.status %>');
+      <% end %>
+      
       <% if instance.initialized? == "chef script error" %>
         $("#instance-<%= instance.id %>-initialized-error").removeClass('hidden');
       <% else %>
@@ -95,8 +103,4 @@ update_status('scenario', '<%= @scenario.status %>')
   <% end %>
 <% end %>
 
-<% if @scenario.queued? or @scenario.booting? or @scenario.unbooting? %>
-  setTimeout(function() { get_scnario_status('<%= @scenario.id %>'); }, 2000);
-<% else %>
-  setTimeout(function() { get_scnario_status('<%= @scenario.id %>'); }, 3000);
-<% end %>
+setTimeout(function() { get_scnario_status('<%= @scenario.id %>'); }, 3000);

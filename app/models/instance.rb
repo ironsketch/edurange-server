@@ -121,14 +121,6 @@ class Instance < ActiveRecord::Base
     return ir
   end
 
-  def bootable?
-    return (self.stopped? and self.subnet.booted?) 
-  end
-
-  def unbootable?
-    return (self.booted? or self.boot_failed? or self.unboot_failed?)
-  end
-
   def scenario
     return self.subnet.cloud.scenario
   end
@@ -156,12 +148,12 @@ class Instance < ActiveRecord::Base
     begin
       s3 = AWS::S3.new
       bucket = s3.buckets[Rails.configuration.x.aws['s3_bucket_name']]
-      if bucket.objects[self.aws_instance_bash_history_page_name].exists?
-        bash_history =  bucket.objects[self.aws_instance_bash_history_page_name].read()
+      if bucket.objects[self.aws_S3_object_name('bash_history')].exists?
+        bash_history =  bucket.objects[self.aws_S3_object_name('bash_history')].read()
         return bash_history == nil ? "" : bash_history
       end
-    rescue
-      return "error getting bash history"
+    rescue => e
+      return "error getting bash history: #{e}"
     end
 
     return ""
@@ -216,7 +208,7 @@ class Instance < ActiveRecord::Base
     return "-" if !self.com_page
 
     begin
-      com_page = AWS::S3.new.buckets[Rails.configuration.x.aws['s3_bucket_name']].objects[self.aws_instance_com_page_name]
+      com_page = AWS::S3.new.buckets[Rails.configuration.x.aws['s3_bucket_name']].objects[self.aws_S3_object_name('com')]
       if com_page.exists?
         text = com_page.read()
         status = text.split("\n")[0]
@@ -265,12 +257,6 @@ class Instance < ActiveRecord::Base
   def add_progress(val)
     # debug "Adding progress to instance!"
     # PrivatePub.publish_to "/scenarios/#{self.subnet.cloud.scenario.id}", instance_progress: val
-  end
-  
-  def debug(message)
-    log = self.log ? self.log : ''
-    message = '' if !message
-    self.update_attribute(:log, log + message + "\n")
   end
 
   def generate_init
@@ -354,6 +340,14 @@ class Instance < ActiveRecord::Base
       raise
       return
     end
+  end
+
+  def player_names
+    names = []
+    self.groups.each do |g|
+      g.players.each { |p| names << p.login }
+    end
+    names
   end
 
   # Handy user methods

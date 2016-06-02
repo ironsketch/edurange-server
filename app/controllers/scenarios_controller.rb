@@ -6,7 +6,7 @@ class ScenariosController < ApplicationController
 
   # Scenario
   before_action :set_scenario, only: [
-    :clone, :destroyme, :edit, :modify, :show, :update, :save, :save_as,
+    :clone, :destroyme, :edit, :modify, :show, :update, :save, :save_as, :log_get,
     :boot, :status, :unboot, :pause, :start,
     :cloud_add, 
     :player_modify, :player_student_group_add, :player_add, :player_group_add, :player_delete, :player_group_admin_access_add, :player_group_user_access_add,
@@ -255,56 +255,56 @@ class ScenariosController < ApplicationController
   # BOOTING
 
   def boot
-    @scenario.boot(dependents: true)
+    @scenario.boot_all(false, true, true)
     respond_to do |format|
       format.js { render 'scenarios/js/boot/boot_scenario.js.erb', :layout => false }
     end
   end
 
   def unboot
-    @scenario.unboot(dependents: true)
+    @scenario.unboot_all(false, true, true)
     respond_to do |format|
       format.js { render 'scenarios/js/boot/unboot_scenario.js.erb', :layout => false }
     end
   end
 
   def boot_cloud
-    @cloud.boot(solo: true)
+    @cloud.boot_single(:boot, false, true, true)
     respond_to  do |format|
       format.js { render template: 'scenarios/js/boot/boot_cloud.js.erb', layout: false }
     end
   end
 
   def unboot_cloud
-    @cloud.unboot(solo: true)
+    @cloud.boot_single(:unboot, false, true, true)
     respond_to do |format|
       format.js { render template: 'scenarios/js/boot/unboot_cloud.js.erb',  layout: false }
     end
   end
 
   def boot_subnet
-    @subnet.boot(solo: true)
+    @subnet.boot_single(:boot, false, true, true)
     respond_to do |format|
       format.js { render template: 'scenarios/js/boot/boot_subnet.js.erb', layout: false }
     end
   end
 
   def unboot_subnet
-    @subnet.unboot(solo: true)
+    @subnet.boot_single(:unboot, false, true, true)
     respond_to do |format|
       format.js { render template: 'scenarios/js/boot/unboot_subnet.js.erb', layout: false }
     end
   end
 
   def boot_instance
-    @instance.boot(solo: true)
+    @instance.boot_single(:boot, false, true, true)
     respond_to do |format|
       format.js { render template: 'scenarios/js/boot/boot_instance.js.erb', layout: false }
     end
   end
 
   def unboot_instance
-    @instance.unboot(solo: true)
+    @instance.boot_single(:unboot, false, true, true)
     respond_to do |format|
       format.js { render template: 'scenarios/js/boot/unboot_instance.js.erb', layout: false }
     end
@@ -852,28 +852,7 @@ class ScenariosController < ApplicationController
   #  Helpers
 
   def log_get
-    if params[:kind] == 'scenario'
-      resource = Scenario.find(params[:id])
-      @dropdown = "dropdown-scenario"
-    elsif params[:kind] == 'cloud'
-      resource = Cloud.find(params[:id])
-      @dropdown = "cloud-#{resource.id}-dropdown"
-    elsif params[:kind] == 'subnet'
-      resource = Subnet.find(params[:id])
-      @dropdown = "subnet-#{resource.id}-dropdown"
-    elsif params[:kind] == 'instance'
-      resource = Instance.find(params[:id])
-      @dropdown = "instance-#{resource.id}-dropdown"
-    end
-
-    if not @user.owns? resource
-      head :ok, content_type: "text/html"
-      return
-    end
-
-    @htmllog = resource.log.gsub("\n", "<br>").html_safe;
-    @name = resource.name
-
+    @htmllog = @scenario.statistic.boot_log_last_read.gsub("\n", "<br>").html_safe;
     respond_to do |format|
       format.js { render template: 'scenarios/js/log.js.erb', layout: false }
     end

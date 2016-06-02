@@ -98,14 +98,6 @@ class Subnet < ActiveRecord::Base
     true
   end
 
-  def bootable?
-    return (self.stopped? and self.cloud.booted?)
-  end
-
-  def unbootable?
-    return (self.booted? or self.boot_failed? or self.unboot_failed?)
-  end
-
   def add_progress(val)
     # debug "Adding progress to subnet"
     # PrivatePub.publish_to "/scenarios/#{self.cloud.scenario.id}", subnet_progress: val
@@ -115,42 +107,8 @@ class Subnet < ActiveRecord::Base
     return self.cloud.scenario.user_id == id
   end
 
-  def debug(message)
-    log = self.log ? self.log : ''
-    message = '' if !message
-    self.update_attribute(:log, log + message + "\n")
-  end
-
   def scenario
     return self.cloud.scenario
-  end
-
-  def instances_booting?
-    return self.instances.select{ |i| (i.booting? or i.queued_boot?) }.any?
-  end
-
-  def instances_unbooting?
-    return self.instances.select{ |i| (i.unbooting? or i.queued_unboot?) }.any?
-  end
-
-  def instances_boot_failed?
-    return self.instances.select{ |i| i.boot_failed? }.any?
-  end
-
-  def instances_unboot_failed?
-    return self.instances.select{ |i| i.unboot_failed? }.any?
-  end
-
-  def instances_booted?
-    return self.instances.select{ |i| i.booted? }.any?
-  end
-
-  def instances_active?
-    return self.instances.select{ |i| i.driver_id != nil }.any?
-  end
-
-  def instances_stopped?
-    self.instances.select{ |i| not i.stopped? }.size == 0
   end
 
 end

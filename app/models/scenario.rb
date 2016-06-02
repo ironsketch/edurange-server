@@ -15,19 +15,16 @@ class Scenario < ActiveRecord::Base
   has_many :groups, dependent: :destroy
   has_many :subnets, through: :clouds
   has_many :instances, through: :subnets
+  has_one :statistic
 
   validate :validate_name, :validate_paths, :validate_user, :validate_stopped
 
-  after_create :get_aws_prefixes
+  after_create :get_aws_prefixes, :load, :create_statistic
+  # after_create :load
+  # after_create :create_statistic
 
   before_destroy :validate_stopped, prepend: true
-  # upon the destruction of a scenario, create an
-  # entry in the statistic table.
-  before_destroy :create_statistic, prepend: true
-  # after creating statistic, destory the s3 buckets where the bash histories were cached
-  before_destroy :destroy_s3_bash_histories
-
-  after_create :load
+  before_destroy :save_questions_and_answers, prepend: true
 
   enum location: [:development, :production, :local, :custom, :test]
 
@@ -92,6 +89,15 @@ class Scenario < ActiveRecord::Base
     end
   end
 
+  # Statistics
+
+  def save_questions_and_answers
+    if self.statistic
+      self.statistic.save_questions_and_answers
+      self.statistic.save_scenario_yml
+    end
+  end
+
   # Loading and file structure
 
   def destroy_dependents
@@ -140,11 +146,13 @@ class Scenario < ActiveRecord::Base
                 recipe = self.recipes.new(name: recipe_name)
               end
 
+
               if not recipe.save
                 self.destroy_dependents
                 errors.add(:load, "error creating recipe. #{recipe.errors.messages}")
                 return false
               end
+
 
               role_recipe = role.role_recipes.new(recipe_id: recipe.id)
               if not role_recipe.save
@@ -451,14 +459,6 @@ class Scenario < ActiveRecord::Base
     end
   end
 
-  def bootable?
-    return (self.stopped? or self.partially_booted?) 
-  end
-
-  def unbootable?
-    return (self.partially_booted? or self.booted? or self.boot_failed? or self.unboot_failed? or self.paused?)
-  end
-
   def change_name(name)
     if not self.stopped?
       errors.add(:running, "can not modify while scenario is not stopped");
@@ -496,12 +496,6 @@ class Scenario < ActiveRecord::Base
 
   def owner?(id)
     return self.user_id == id
-  end
-
-  def debug(message)
-    log = self.log ? self.log : ''
-    message = '' if !message
-    self.update_attribute(:log, log + message + "\n")
   end
 
   def scenario
@@ -571,38 +565,11 @@ class Scenario < ActiveRecord::Base
   end
 
   def instances_initialized?
-    return self.instances.select{ |i| not i.initialized? }.any?
-  end
-
-  def clouds_booting?
-    return self.clouds.select{ |c| (c.booting? or c.queued_boot?) }.any?
-  end
-
-  def clouds_unbooting?
-    return self.clouds.select{ |c| c.unbooting? or c.queued_unboot? }.any?
-  end
-
-  def subnets_booting?
-    return self.subnets.select{ |s| (s.booting? or s.queued_boot?) }.any?
-  end
-
-  def subnets_unbooting?
-    return self.subnets.select{ |s| s.unbooting? or s.queued_unboot? }.any?
-  end
-
-  def clouds_boot_failed?
-    return self.clouds.select{ |c| c.boot_failed? }.any?
-  end
-
-  def clouds_unboot_failed?
-    return self.clouds.select{ |c| c.unboot_failed? }.any?
-  end
-
-  def clouds_booted?
-    return self.clouds.select{ |c| c.booted?  }.any?
+    self.instances.select{ |i| i.initialized? == "true" }.size == self.instances.size
   end
 
   def check_status
+    return
     cnt = 0
     stopped = 0
     queued_boot = 0
@@ -811,142 +778,48 @@ class Scenario < ActiveRecord::Base
     self.update_modified
   end
 
-  def get_nat
-    self.instances.select { |i| i.os == "nat" }.first
+  def status_update
+    self.reload
+    if self.descendents.select { |d| d.stopped? }.size == self.descendents.size
+      self.update_attribute(:status, :stopped)
+    elsif self.descendents.select { |d| d.booted? }.size == self.descendents.size
+      self.update_attribute(:status, :booted)
+    else
+      self.update_attribute(:status, :booted_partial)
+    end
+  end
+
+  def nat_instance
+    nat = self.instances.select{|i| i.internet_accessible and i.os == "nat" }
+    (nat.any? ? nat.first : nil)
+  end
+
+  def data_path
+    path = "#{Rails.root}/data/#{Rails.env}/#{self.user.id}/#{self.created_at.strftime("%y_%m_%d")}_#{self.name}_#{self.id}"
+    FileUtils.mkdir_p(path) if not File.exists?(path)
+    path
+  end
+
+  def data_path_instances
+    path = "#{self.data_path}/instances"
+    FileUtils.mkdir_p(path) if not File.exists?(path)
+    path
+  end
+
+  def data_path_boot
+    path = "#{self.data_path}/boot"
+    FileUtils.mkdir_p(path) if not File.exists?(path)
+    path
   end
 
   private
-    # methods for creating statistics on scenarios
-
-    # utility method
-    def is_numeric?(s)
-      # input -> s: a string
-      # output -> true if the string is a number value, false otherwise
-      begin
-        if Float(s)
-          return true
-        end
-      rescue
-        return false
-      end
-    end
-    # utility method end
 
     def create_statistic
-      # private method to initialize a statistic entry
-      # during Scenario destriction time. These are the first
-      # steps of the analytics pipeline.
+      statistic = Statistic.new(scenario_id: self.id)
+      statistic.save
+      # statistic.save_bash_histories_exit_status_script_log
+      # statistic.save_questions_and_answers
+    end
 
-      statistic = Statistic.new
-      # populate statistic with bash histories
-      self.instances.all.each do |instance|
-        # concatenate all bash histories into one big string
-	statistic.bash_histories += '###' + instance.name + "\n"
-        statistic.bash_histories += instance.get_bash_history
-
-        # Concatenate all script logs
-        # Will look messy
-	statistic.script_log += '###' + instance.name + "\n"
-        statistic.script_log += instance.get_script_log
-
-        # Concatenate all exit status logs
-	statistic.exit_status += '###' + instance.name + "\n"
-        statistic.exit_status += instance.get_exit_status 
-      end
+end
   
-      # partition the big bash history string into a nested hash structure
-      # mapping usernames to the commands they entered.
-      statistic.bash_analytics = partition_bash(statistic.bash_histories.split("\n"))
-
-      # and with scenario metadata
-      statistic.user_id = self.user_id
-      statistic.scenario_name = self.name
-      statistic.scenario_created_at = self.created_at
-      # we'll also want to grab a list of users from the scenario,
-      # otherwise this data can be got, from the keys of
-      # the bash analytics field
-      statistic.save  # stuff into db
-
-      # create statistic file for download
-      bash_analytics = ""
-      statistic.bash_analytics.each do |analytic| 
-        bash_analytics = bash_analytics + "#{analytic}" + "\n"
-      end
-      file_text = "Scenario #{statistic.scenario_name} created at #{statistic.scenario_created_at}\nStatistic #{statistic.id} created at #{statistic.created_at}\n\nBash Histories: \n \n#{statistic.bash_histories} \n"
-      File.write("#{Rails.root}/data/statistics/#{statistic.id}_Statistic_#{statistic.scenario_name}.txt",file_text)
-      
-      #Create Script Log File
-
-      #Referencing script log by statistic.script_log
-      script_out = "Scenario #{statistic.scenario_name} created at #{statistic.scenario_created_at}\nStatistic #{statistic.id} created at #{statistic.created_at}\n\nScript Log: \n \n#{statistic.script_log} \n"
-      File.write("#{Rails.root}/data/statistics/#{statistic.id}_Script_Log_#{statistic.scenario_name}.txt",script_out)
-
-      #Create Exit Status file
-
-      #Referencing exit status log by statistic.exit_status
-      exit_stat_out = "Scenario #{statistic.scenario_name} created at #{statistic.scenario_created_at}\nStatistic #{statistic.id} created at #{statistic.created_at}\n\nExit Status Log: \n \n#{statistic.exit_status} \n"
-      File.write("#{Rails.root}/data/statistics/#{statistic.id}_Exit_Status_#{statistic.scenario_name}.txt",exit_stat_out)
-
-
-    end
-
-    def partition_bash(data)
-      # input -> data: a list of strings of bash commands split by newline
-      # output -> d: a hash {user->{timestamp->command}}
-
-      # method to populate the bash_analytics field of
-      # a Statistic model with a nested hash
-      # that maps users to timestamps to commands
-      d = Hash.new(0)  # {user -> { timestamp -> command }}
-      i = 4  # our index, begin @ index four to skip unneeded lines
-      # make two passes over the data
-      #   first, creating the users list
-      #   & then, grabbing commands associated
-      #     with each of those users    
-
-      # outer hash
-      while i < data.length
-        if data[i][0..1] == "##"
-          e = data[i].length  # endpoint
-          u = data[i][3..e-1]  # username
-          if !d.include?(u)
-            # don't overwrite unless already included
-            d[u] = Hash.new(0)
-          end
-        end
-        i += 1
-      end
-      i = 0  # reset index
-      users = d.keys  # users
-      u_i = 0 # user index
-
-      # inner hash
-      while i < data.length
-        if is_numeric?(data[i][1..data[i].length])
-          e = data[i].length
-          t = data[i][2..e-1]  # timestamp
-          if data[i + 1] != ""
-            c = data[i + 1]  # command
-            d[users[u_i]][t] = c
-            i += 1  # inc twice
-          end
-        elsif data[i][0..1] == "##"
-          e = data[i].length
-          u = data[i][3..e-1]  # to find index in users
-          u_i = users.find_index(u)  # & change user u
-        end
-        i += 1
-      end
-      return d  # {users => { timestamps => commands }}
-    end
-
-    def destroy_s3_bash_histories
-      # bash histories are persistent between boot cycles
-      # only once scenario is destroyed are they deleted from s3 bucket
-      self.instances.each do |instance|
-        instance.aws_instance_delete_bash_history_page
-        instance.aws_instance_delete_exit_status_page
-        instance.aws_instance_delete_script_log_page
-      end
-    end  
-  end
