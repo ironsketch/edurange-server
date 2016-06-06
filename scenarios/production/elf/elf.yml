@@ -10,6 +10,7 @@ Roles:
       - nasm
       - git
       - emacs
+      - build-essential
     Recipes:
       - sshd_password_login
       - elf
