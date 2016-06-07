@@ -34,6 +34,8 @@ gem 'chartkick'
 gem 'groupdate'
 gem 'active_median'
 gem 'rubyzip'
+gem 'font-awesome-sass', '~> 4.6.2'
+gem 'jquery-datatables-rails', '~> 3.3.0'
 
 group :development do
   gem 'better_errors'
