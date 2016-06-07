@@ -148,12 +148,7 @@ class ScenariosController < ApplicationController
   end
 
   def create_custom
-    # @scenario = Scenario.new(name: params[:name], location: :development, user_id: @user.id)
-    # @scenario.save
-    # # if @scenario.make_custom
-    # #   @scenario.save
-    # # end
-
+    @scenario = ScenarioManagement.new.custom_create(params[:name], @user)
     respond_to do |format|
       format.js { render "scenarios/js/scenario/create_custom.js.erb", layout: false }
     end

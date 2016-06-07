@@ -1,7 +1,7 @@
 <% if @scenario.errors.any? %>
-  <% if @scenario.errors[:name].any? %>
+  <% if @scenario.errors[:custom].any? %>
     $('#modal-scenario-custom-new').find('#name-div').addClass('has-error');
-    $('#modal-scenario-custom-new').find('#name-help').text('<%= @scenario.errors[:name][0].html_safe %>');
+    $('#modal-scenario-custom-new').find('#name-help').text('<%= @scenario.errors[:custom][0].html_safe %>');
   <% end %>
 <% else %>
   window.location = "/scenarios/<%= @scenario.id %>"
