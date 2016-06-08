@@ -1,32 +1,34 @@
-%div.row
-  %div.col-sm-6
-    %b Access Key ID:
-    = ENV["AWS_ACCESS_KEY_ID"].sub(/^.............../, "...............")
-    %br
-    %b Access Key:
-    = ENV["AWS_SECRET_ACCESS_KEY"].sub(/^.................................../,
-        "...................................")
-    %br
-    %b Region:
-    = ENV["AWS_REGION"]
-    %br
-    %b EC2 Key:
-    = Rails.configuration.x.aws['ec2_key_pair_name']
-  %div.col-sm-6
-    %b S3 Bucket Name:
-    = Rails.configuration.x.aws['s3_bucket_name']
-    %br
-    %b S3 End Point:
-    = Rails.configuration.x.aws[Rails.configuration.x.aws['region']]['s3_endpoint']
-    %br
-    %b VPC Used/Limit:
-    = "#{@aws_vpc_cnt.to_s}/#{Rails.configuration.x.aws[Rails.configuration.x.aws['region']]['vpc_limit']}"
-    %br
-    %b Instance Used/Limit:
-    = "#{@aws_instance_cnt}/#{Rails.configuration.x.aws[Rails.configuration.x.aws['region']]['instance_limit']}"
-    %br
-    %b AMI NAT:
-    = Rails.configuration.x.aws[Rails.configuration.x.aws['region']]['ami_nat']
-    %br
-    %b AMI Ubuntu:
-    = Rails.configuration.x.aws[Rails.configuration.x.aws['region']]['ami_ubuntu']
+-#%b Access Key ID:
+-#= ENV["AWS_ACCESS_KEY_ID"].sub(/^.............../, "...............")
+-#%br
+-#%b Access Key:
+-#= ENV["AWS_SECRET_ACCESS_KEY"].sub(/^.................................../,
+-#"...................................")
+-#%br
+%table.table.table-sm
+  %thead
+    %th{ colspan: 2} AWS Settings
+  %tr
+    %th{ scope: 'row' } Region
+    %td= (ENV['AWS_REGION'] || 'not defined')
+  %tr
+    %th{ scope: 'row' } EC2 Key
+    %td= Rails.configuration.x.aws['ec2_key_pair_name']
+  %tr
+    %th{ scope: 'row' } S3 Bucket Name
+    %td= Rails.configuration.x.aws['s3_bucket_name']
+  %tr
+    %th{ scope: 'row' } S3 End Point
+    %td= Rails.configuration.x.aws[Rails.configuration.x.aws['region']]['s3_endpoint']
+  %tr
+    %th{ scope: 'row' } VPC Used/Limit
+    %td= "#{@aws_vpc_cnt.to_s}/#{Rails.configuration.x.aws[Rails.configuration.x.aws['region']]['vpc_limit']}"
+  %tr
+    %th{ scope: 'row' } Instance Used/Limit
+    %td= "#{@aws_instance_cnt}/#{Rails.configuration.x.aws[Rails.configuration.x.aws['region']]['instance_limit']}"
+  %tr
+    %th{ scope: 'row' } AMI NAT
+    %td= Rails.configuration.x.aws[Rails.configuration.x.aws['region']]['ami_nat']
+  %tr
+    %th{ scope: 'row' } AMI Ubuntu
+    %td= Rails.configuration.x.aws[Rails.configuration.x.aws['region']]['ami_ubuntu']

@@ -1,0 +1,15 @@
+- if defined? @user
+  %table.table.table-sm
+    %thead
+      %th{ colspan: 2 } Account Information #{link_to 'edit', edit_user_registration_path}
+    %tbody
+      %tr
+        %th{ scope: 'row' } Name
+        %td= @user.name
+      %tr
+        %th{ scope: 'row' } Email
+        %td= @user.email
+      - if @user.is_admin? or @user.is_instructor?
+        %tr
+          %th{ scope: 'row' } Registration Code
+          %td= @user.registration_code

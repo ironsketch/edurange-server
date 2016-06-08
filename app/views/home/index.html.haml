@@ -1,32 +1,70 @@
-%div.col-md-8.col-md-offset-2
-  %div.panel.panel-default
-    %div.panel-heading
-      %h1
-        EDURange
-        %small
-          the cybersecurity training ground
-    %div.panel-body
-      %h2
-        Sign in
-        %small
-          or
-          = link_to 'sign up with a registration code', 'users/sign_up'
-      %hr
-      = form_tag session_path(:user), class: 'form-horizontal' do
-        %div.form-group
-          = label_tag 'user[email]', 'email', class: 'col-md-2 control-label'
-          %div.col-md-10
-            = text_field_tag 'user[email]', nil, class: 'form-control', placeholder: 'email'
-        %div.form-group
-          = label_tag 'user[password]', 'password', class: 'col-md-2 control-label'
-          %div.col-md-10
-            = password_field_tag 'user[password]', nil, class: 'form-control', placeholder: 'password'
-        %div.form-group
-          %div.col-md-10.col-md-offset-2
-            %div.checkbox
-              %label
-                = check_box_tag 'user[remember_me]', nil, class: 'form-control'
-                Remember me
-        %div.form-group
-          %div.col-md-10.col-md-offset-2
-            = button_tag "Sign In", class: 'btn btn-primary'
+.panel.panel-default
+  .panel-heading.nav.nav-pills
+    - if @user.is_admin?
+      %h4 Admin Dashboard
+    - else
+      %h4 Dashboard
+
+  .panel-body
+    .row
+      .col-md-4
+        = render 'home/last_login'
+        = render 'home/account_information'
+        - if @user.is_admin?
+          = render 'admin/aws_settings'
+      .col-md-8
+        - if @user.is_admin? || @user.is_instructor?
+          %h2 Users
+          %hr
+        - if @user.is_admin?
+          = render 'instructors_table'
+
+        -#- if @user.is_admin? || @user.is_instructor?
+          %table.table#students-table
+            %thead
+              %th{ colspan: 4 } Students
+            %thead
+              %th
+              %th Name
+              %th Email
+              %th Organization
+              %th Options
+            - @students.each do |user|
+              = render 'admin/student', user: user
+          -#%label
+            -#Students:
+            -#= link_to 'expand/collapse', '#students-table',
+                -#data: { toggle: 'collapse', target: '#students-table-collapse' }
+
+          -#%dl
+            -#%div.collapse.in#students-table-collapse
+              -#= form_tag '#', method: :post, remote: true, class: 'form-inline', id: 'students-table-form' do
+                -#= hidden_field_tag 'action', value: 'delete'
+                -#%table.table#students-table
+                  -#%tr
+                    -#%td
+                      -#<a href="javascript:$('#students-table input:checkbox').prop('checked', true);">all</a>,
+                      -#<a href="javascript:$('#students-table input:checkbox').prop('checked', false);">none</a>
+                    -#%th Name
+                    -#%th Email
+                    -#%th Organization
+                    -#%th
+                  -#- @students.each do |user|
+                    -#= render 'admin/student', user: user
+                  -#%tr#foot
+                    -#%td{ colspan: "5" }
+                      -#<a href="javascript:$('#students-table input:checkbox').prop('checked', true);">all</a>,
+                      -#<a href="javascript:$('#students-table input:checkbox').prop('checked', false);">none</a>,
+                      -#%b with selected:
+                      -#= (link_to 'add to all', "javascript:void(0);",
+                        -#onclick: "$('#students-table-form').attr('action', '#{admin_student_add_to_all_path}');$('#students-table-form').submit();") + ','
+                      -#= link_to('delete', "javascript:void(0);", remote: true, method: :post,
+                        -#onclick: "$('#students-table-form').attr('action', '#{admin_user_delete_path}');$('#students-table-form').submit();",
+                        -#:data => { :confirm => "Are you sure you want to delete all selected students?" })
+
+          -#%span.pull-right= link_to '+ create student group', '#modal-student-group-create', data: {toggle: "modal"}, onclick: "$('#modal-student-group-create').find('#name-div').removeClass('has-error'); $('#modal-student-group-create').find('#name').val(''); $('#modal-student-group-create').find('#name-help').html(''); "
+          -#%label Student groups:
+          -#%dl
+            -#%dl{ id: "student-groups" }
+              -#- @user.student_groups.each do |student_group|
+                -#= render 'admin/student_group', student_group: student_group, scenario: @scenario

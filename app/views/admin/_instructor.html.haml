@@ -1,8 +1,8 @@
 %tr{ id: "user-#{user.id}"}
   %td= user.name
   %td= user.email
-  %td= user.organization
-  %td.text-right
+  %td= (user.organization || 'none')
+  -#%td.text-right
     = link_to 'delete', admin_user_delete_path(id: user.id), remote: true, method: :post, :data => { :confirm => "Are you sure you want to delete Instructor #{user.name}?" }
     |
     = link_to 'make student', admin_instructor_to_student_path(id: user.id), remote: true, method: :post, :data => { :confirm => "Are you sure you want to make Instructor #{user.name} a student? This will erase all students accounts belonging to instructor." }

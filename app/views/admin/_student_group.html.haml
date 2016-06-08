@@ -24,7 +24,7 @@
           %th Organization
           %th
         - student_group.student_group_users.each do |student|
-          = render 'student_group_student', student: student, student_group: student_group
+          = render 'admin/student_group_student', student: student, student_group: student_group
         %tr#foot
           %td{ colspan: '5' }
             <a href="javascript:$('#student-group-#{student_group.id} input:checkbox').prop('checked',true);">all</a>,

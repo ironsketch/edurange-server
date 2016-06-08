@@ -2,31 +2,31 @@
 = render 'admin/modals/student_group_create'
 = render 'admin/modals/student_group_user_add'
 
-%div.panel.panel-default
-  %div.panel-heading.nav.nav-pills
-    %li
-      %h3
-        Admin Home
+.panel.panel-default
+  .panel-heading.nav.nav-pills
+    .h4 Admininstrator
 
   %div.panel-body
-    = render 'partials/account_information.html.haml'
-    %hr
+    .row
+      .col-md-6
+        = render 'partials/account_information.html.haml'
 
-    %label AWS Settings:
-    - if not @aws_vpc_cnt
-      %div.failure
-        FAILED TO VALIDATE CREDENTIALS
-    = render 'admin/aws_settings.html.haml'
-    %hr
+      .col-md-6
+        %label AWS Settings:
+        - if not @aws_vpc_cnt
+          %div.failure
+            FAILED TO VALIDATE CREDENTIALS
+        = render 'admin/aws_settings.html.haml'
 
-    %label Registration Code:
-    %dl
-      = @user.registration_code
-    %p
+    .row
+      %p.well.well-sm.col-sm-2
+        %b Registration code:
+        = @user.registration_code
 
-    %hr
-
-    %label User Information:
+.panel.panel-default
+  .panel-heading
+    .h4 Users
+  .panel-body
 
     %dl
       %span.pull-right= link_to '+ create instructor', "#modal-create-instructor", :data => {:toggle=>"modal"}, |

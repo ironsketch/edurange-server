@@ -1,0 +1,4 @@
+%i.fa.fa-clock-o
+%b Last sign in:
+#{@user.last_sign_in_at.strftime('%b %-d, %Y %l:%M%P')}
+%span.text-muted.small from #{@user.last_sign_in_ip}

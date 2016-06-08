@@ -13,8 +13,10 @@
 //= require jquery
 //= require jquery.turbolinks
 //= require jquery_ujs
-//= require dataTables/jquery.dataTables
-//= require dataTables/bootstrap/3/jquery.dataTables.bootstrap
+//= require datatables
+//= require datatables-bootstrap
+//= require datatables-buttons
+//= require datatables-select
 //= require bootstrap
 //= require underscore
 //= require bootstrap

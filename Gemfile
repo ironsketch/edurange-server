@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 ruby '2.2.3'
 gem 'rails', '~> 4.2.0'
+gem 'bundler', '>= 1.8.4'
 gem 'sqlite3'
 gem 'sass-rails', '~> 4.0.3'
 gem 'uglifier', '>= 1.3.0'
@@ -34,8 +35,16 @@ gem 'chartkick'
 gem 'groupdate'
 gem 'active_median'
 gem 'rubyzip'
-gem 'font-awesome-sass', '~> 4.6.2'
-gem 'jquery-datatables-rails', '~> 3.3.0'
+gem 'font-awesome-sass'
+
+# Check it out, makes importing frontend packages SUPER easy
+# https://rails-assets.org
+source 'https://rails-assets.org' do
+  gem 'rails-assets-datatables', '~> 1.10.12'
+  gem 'rails-assets-datatables-bootstrap', '~> 1.0.0'
+  gem 'rails-assets-datatables-select', '~> 1.2.0'
+  gem 'rails-assets-datatables-buttons', '~> 1.2.1'
+end
 
 group :development do
   gem 'better_errors'
