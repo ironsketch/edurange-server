@@ -10,7 +10,7 @@ $('#role-add-button-li').attr('class', '<%= @scenario.stopped? ? "" : "disabled"
 $('#start-button-li').attr('class', '<%= @scenario.paused? ? "" : "disabled" %>');
 $('#pause-button-li').attr('class', '<%= @scenario.booted? ? "" : "disabled" %>');
 
-update_status('scenario', '<%= @scenario.status %>')
+update_status('scenario', '<%= @scenario_status %>')
 
 <% @scenario.clouds.each do |cloud| %>
 
