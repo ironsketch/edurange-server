@@ -780,7 +780,11 @@ class Scenario < ActiveRecord::Base
 
   def status_update
     self.reload
-    if self.descendents.select { |d| d.stopped? }.size == self.descendents.size
+    if self.descendents.select { |d| d.boot_scheduled? or d.booting? or d.boot_fail? }.any?
+      self.update_attribute(:status, :booting)
+    elsif self.descendents.select { |d| d.unboot_scheduled? or d.unbooting? or d.unboot_fail? }.any?
+      self.update_attribute(:status, :unbooting)
+    elsif self.descendents.select { |d| d.stopped? }.size == self.descendents.size
       self.update_attribute(:status, :stopped)
     elsif self.descendents.select { |d| d.booted? }.size == self.descendents.size
       self.update_attribute(:status, :booted)
