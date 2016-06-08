@@ -1,7 +1,7 @@
 defaults: &defaults
   region: <%= ENV['AWS_REGION'] %>
 
-  us-east_1:
+  us-east-1:
     vpc_limit: 10
     instance_limit: 60
     ami_nat: ami-fc85c096
