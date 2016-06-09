@@ -172,7 +172,8 @@ class Statistic < ActiveRecord::Base
     path = data_instance_by_id_user_command_frequency(self.resource_info[:instances][instance_name][:id], user)
     return false if not File.exists? path
     c = {}
-    YAML.load_file(path).each { |command, count| c[command] = count }
+    yml = YAML.load_file(path)
+    yml.each { |command, count| c[command] = count } if yml
     c
   end
 
