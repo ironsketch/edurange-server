@@ -18,6 +18,7 @@ class Statistic < ActiveRecord::Base
   end
 
   def gen_info
+    return if not self.scenario
     info = { instances: {} }
     self.scenario.instances.each do |i|
       info[:instances][i.name] = {id: i.id, users: i.player_names }
@@ -176,7 +177,7 @@ class Statistic < ActiveRecord::Base
   end
 
   def bash_history_instance_user(instance_name, user_name)
-    data = data_read(data_instance_user_bash_history_path(instance_name, user_name))
+    data_read(data_instance_user_bash_history_path(instance_name, user_name))
   end
 
   def instance_id_get(name)
@@ -341,7 +342,7 @@ class Statistic < ActiveRecord::Base
   end
 
   def data_instance_user_bash_history_path(instance_name, user_name)
-    "#{data_path_instance(instance_name)}/users/#{user_name}.bash_history.yml"
+    data_file_check "#{data_path_instance(instance_name)}/users/#{user_name}.bash_history.yml"
   end
 
   def data_instance_user_bash_history_download_name(instance_name, user_name)
@@ -381,15 +382,15 @@ class Statistic < ActiveRecord::Base
   end
 
   def data_instance_by_id_user_bash_history_path(instance_id, user_name)
-    "#{data_path_instance_by_id_users(instance_id)}/#{user_name}.bash_history.yml"
+    data_file_check "#{data_path_instance_by_id_users(instance_id)}/#{user_name}.bash_history.yml"
   end
 
   def data_instance_by_name_user_command_frequency(instance_name, user_name)
-    "#{data_path_instance_users(instance_id)}/#{user_name}.command_frequency.yml"
+    data_file_check "#{data_path_instance_users(instance_id)}/#{user_name}.command_frequency.yml"
   end
 
   def data_instance_by_id_user_command_frequency(instance_id, user_name)
-    "#{data_path_instance_by_id_users(instance_id)}/#{user_name}.command_frequency.yml"
+    data_file_check "#{data_path_instance_by_id_users(instance_id)}/#{user_name}.command_frequency.yml"
   end
 
   def data_fetch_and_process
@@ -427,6 +428,11 @@ class Statistic < ActiveRecord::Base
 
   def data_path_check(path)
     FileUtils.mkdir_p(path) if not File.exists?(path)
+    path
+  end
+
+  def data_file_check(path)
+    FileUtils.touch(path) if not File.exists?(path)
     path
   end
 

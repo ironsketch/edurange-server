@@ -151,8 +151,11 @@ class StatisticsController < ApplicationController
       cf = @statistic.command_frequency(params[:instances], params[:users])
       bh = @statistic.bash_history_instance_user(params[:instances], params[:users])
       yml = YAML.load_file(@statistic.data_instance_user_bash_history_path(params[:instances], params[:users]))
-      yml.each do |time, command|
-        output += Time.at(time.to_i).strftime("%I:%M %p") + "<br>" + command + "<br>"
+      
+      if yml
+        yml.each do |time, command|
+          output += Time.at(time.to_i).strftime("%I:%M %p") + "<br>" + command + "<br>"
+        end
       end
       js = "$('#analytic-header').text('Command Frequency: #{params[:users]}');" +
       js = "$('#bash-history-header').text('Bash History: #{params[:users]}');" +

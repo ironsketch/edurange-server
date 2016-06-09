@@ -19,6 +19,9 @@ class Player < ActiveRecord::Base
         self.group.scenario.update(modified: true)
       end
     end
+    if self.scenario.statistic
+      self.scenario.statistic.gen_info
+    end
   end
 
   def instances_stopped
