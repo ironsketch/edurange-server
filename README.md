@@ -30,10 +30,16 @@ git clone https://github.com/edurange/edurange-server.git
 
 ####  II. Install RVM (Ruby Version Manager), rails, rubygems, and bundler
 
-  Follow this guide: (https://rvm.io/rvm/install). This project uses Ruby 2.1.5 so use RVM to install and select the    correct   version of Ruby:
+  Note: If you have Ruby installed through your package manager, it will conflict with this installation. If necessary perge it first.
 ```
-rvm install [ruby version number eg 2.2.1]
-rvm use [ruby version number eg 2.2.1]
+sudo apt-get remove --purge ruby
+```
+
+  Follow this guide to install RVM: (https://rvm.io/rvm/install#installation). Single-user instructions recommended.
+  This project uses Ruby 2.2.3 so use RVM to install and select the correct version of Ruby:
+```
+rvm install [ruby version number eg 2.2.3]  - rvm install 2.2.3
+rvm use [ruby version number eg 2.2.3]      - rvm use 2.2.3
 ```
 
 You may have to do something like: `bin/bash --login` in order to set the RVM ruby version (which doens't refer to the system ruby version).
@@ -53,7 +59,7 @@ sudo yum install rubygem-{rails}
 sudo gem install bundler
 ```
 
-To finish up the installation, yank and update all the gem dependencies:
+In the edurange-server directory, yank and update all the gem dependencies:
 ```
 bundle update
 bundle install
