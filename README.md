@@ -48,15 +48,11 @@ Also, install bundler (to take care of gem dependencies) and the rails framework
 
 Debian/Ubuntu Linux:
 ```
-sudo apt-get install rubygems
-sudo apt-get install rails
-sudo gem install bundler
+gem install bundler
 ```
 Fedora/Red Hat Linux
 ```
-sudo yum install rubygems
-sudo yum install rubygem-{rails}
-sudo gem install bundler
+gem install bundler
 ```
 
 In the edurange-server directory, yank and update all the gem dependencies:
