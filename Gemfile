@@ -34,6 +34,7 @@ gem 'chartkick'
 gem 'groupdate'
 gem 'active_median'
 gem 'rubyzip'
+gem 'font-awesome-rails'
 
 group :development do
   gem 'better_errors'

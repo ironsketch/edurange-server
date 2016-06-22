@@ -7,6 +7,9 @@
     .col-md-4
       = render 'dashboard/account_information'
     .col-md-8
+      %h2 Scenarios
+      = render 'dashboard/scenarios', scenarios: @user.scenarios
+
       %div.row
         %div.col-sm-6
           %label Student Groups:

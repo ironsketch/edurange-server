@@ -11,7 +11,10 @@
       = render 'dashboard/aws_settings'
 
     .col-md-8
-      %label User Information:
+      %h2 Scenarios
+      = render 'dashboard/scenarios', scenarios: @user.scenarios
+
+      %h2 Users
 
       %dl
         %span.pull-right= link_to '+ create instructor', "#modal-create-instructor", :data => {:toggle=>"modal"}, |

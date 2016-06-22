@@ -1,0 +1,26 @@
+- if not scenarios.empty?
+  %p
+    #{fa_icon('circle', class: 'text-success')} = booted
+    #{fa_icon('circle-o')} = unbooted
+  %p
+    %em
+      Please remember to unboot scenarios when they are no longer needed.
+  .row
+    %ul.scenario-list
+      - scenarios.each do |scenario|
+        %a{href: scenario_path(scenario)}
+          %li.scenario-tile.col-md-4
+            = scenario.name
+            - if scenario.booted?
+              = fa_icon('circle', class: 'text-success')
+            -else
+              = fa_icon('circle-o')
+            %p.small.text-muted
+              created
+              #{scenario.created_at.to_formatted_s(:short)}
+- else
+  %p
+    %strong It looks like you don't have any scenarios yet.
+    Click #{link_to 'here', new_scenario_path} to pick a scenario to edit and/or
+    boot. Once you've created a scenario from one of our templates, you can add
+    students to it.
