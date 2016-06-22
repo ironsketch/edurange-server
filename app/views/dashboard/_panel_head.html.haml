@@ -1,0 +1,11 @@
+%div.panel-heading.nav.nav-pills
+  %li
+    %h3
+      - if @user.is_admin?
+        Admin Dashboard
+      - elsif @user.is_instructor?
+        Instructor Dashboard
+      - elsif @user.is_student?
+        Student Dashboard
+      - else
+        Dashboard

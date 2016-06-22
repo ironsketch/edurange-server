@@ -1,0 +1,37 @@
+%table.table#aws-settings
+  %thead
+    %tr
+      %th{ colspan: 2 } AWS Settings
+  %tr
+    %th{ scope: 'row' } Access Key ID
+    - if ENV["AWS_ACCESS_KEY_ID"] && ENV["AWS_SECRET_ACCESS_KEY"]
+      %td= ENV["AWS_ACCESS_KEY_ID"].sub(/^.............../, "...............")
+    - else
+      %td.text-failure Not set
+  %tr
+    %th{ scope: 'row' } Region
+    - if ENV["AWS_REGION"]
+      %td= ENV["AWS_REGION"]
+    - else
+      %td.text-failure Not set
+  %tr
+    %th{ scope: 'row' } EC2 Key
+    %td= Rails.configuration.x.aws['ec2_key_pair_name']
+  %tr
+    %th{ scope: 'row' } S3 Bucket Name
+    %td= Rails.configuration.x.aws['s3_bucket_name']
+  %tr
+    %th{ scope: 'row' } S3 End Point
+    %td= Rails.configuration.x.aws[Rails.configuration.x.aws['region']]['s3_endpoint']
+  %tr
+    %th{ scope: 'row' } VPC Usage
+    %td= "#{@aws_vpc_cnt.to_s}/#{Rails.configuration.x.aws[Rails.configuration.x.aws['region']]['vpc_limit']}"
+  %tr
+    %th{ scope: 'row' } Instance Usage
+    %td= "#{@aws_instance_cnt}/#{Rails.configuration.x.aws[Rails.configuration.x.aws['region']]['instance_limit']}"
+  %tr
+    %th{ scope: 'row' } AMI NAT
+    %td= Rails.configuration.x.aws[Rails.configuration.x.aws['region']]['ami_nat']
+  %tr
+    %th{ scope: 'row' } AMI Ubuntu
+    %td= Rails.configuration.x.aws[Rails.configuration.x.aws['region']]['ami_ubuntu']
