@@ -1,11 +1,17 @@
 class UserMailer < ApplicationMailer
     layout false
-    default from: 'higgz.test@gmail.com'
+    default from: 'no-reply@' + `hostname`
 
     def email_credentials(user, password)
         @user = user
         @password = password
         mail(to: user.email, subject: 'Welcome EDURange Instructor')
+    end
+
+    def reset_password(user, password)
+        @user = user
+        @password = password
+        mail(to: user.email, subject: 'EDURange password reset')
     end
 
     def test_email(email)

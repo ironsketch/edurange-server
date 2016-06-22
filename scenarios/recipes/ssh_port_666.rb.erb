@@ -1,4 +1,4 @@
-script "restart_sshd" do
+script "ssh_port_666" do
   interpreter "bash"
   user "root"
   cwd "/tmp"
@@ -12,5 +12,7 @@ script "restart_sshd" do
   then
   service sshd reload
   fi
+  touch /tmp/recipe-done-ssh-port-666
   EOH
+  not_if "test -e /tmp/recipe-done-ssh-port-666"
 end

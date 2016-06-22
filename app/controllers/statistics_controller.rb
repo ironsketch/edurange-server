@@ -143,18 +143,28 @@ class StatisticsController < ApplicationController
 
   # method called via AJAX request, sends javascript response after performing analytics  
   def generate_analytics
-    cf = @statistic.command_frequency(params[:instances], params[:users])
-    bh = @statistic.bash_history_instance_user(params[:instances], params[:users])
-
-    yml = YAML.load_file(@statistic.data_instance_user_bash_history_path(params[:instances], params[:users]))
-
     output = ""
-    yml.each do |time, command|
-      output += Time.at(time.to_i).strftime("%I:%M %p") + "<br>" + command + "<br>"
+    cf = nil
+    js = ""
+
+    if params[:instances] != "null" and params[:users] != ""
+      cf = @statistic.command_frequency(params[:instances], params[:users])
+      bh = @statistic.bash_history_instance_user(params[:instances], params[:users])
+      yml = YAML.load_file(@statistic.data_instance_user_bash_history_path(params[:instances], params[:users]))
+      
+      if yml
+        yml.each do |time, command|
+          output += Time.at(time.to_i).strftime("%I:%M %p") + "<br>" + command + "<br>"
+        end
+      end
+      js = "$('#analytic-header').text('Command Frequency: #{params[:users]}');" +
+      js = "$('#bash-history-header').text('Bash History: #{params[:users]}');" +
+           "new Chartkick.ColumnChart('chart', #{cf.to_json});" +
+           "$('#bash-history-instance-user').html(\"#{output}\");"
     end
 
     respond_to do |format|
-      format.js{ render js: "$('#analytic-header').text('Command Frequency: #{params[:users]}'); new Chartkick.ColumnChart('chart', #{cf.to_json}); $('#bash-history-instance-user').html(\"#{output}\");" }
+      format.js{ render js: js }
     end
   end
 

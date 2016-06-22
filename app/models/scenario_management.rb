@@ -1,5 +1,47 @@
 class ScenarioManagement
 
+  def custom_create(name, user)
+    # @scenario = Scenario.new(name: name, location: Rails.env.to_sym, user)
+    scenario = Scenario.new
+
+    path_env = "#{Rails.root}/scenarios/#{Rails.env}/#{name.downcase}"
+    path_local = "#{Rails.root}/scenarios/local/#{name.downcase}"
+    path_custom = "#{Rails.root}/scenarios/custom/#{user.id}/#{name.downcase}"
+
+
+    if File.exists? path_env
+      scenario.errors.add(:custom, "#{Rails.env} scenario with that name already exists.")
+      return scenario
+    end
+    if File.exists? path_local
+      scenario.errors.add(:custom, "local scenario with that name already exists.")
+      return scenario
+    end
+    if File.exists? path_custom
+      scenario.errors.add(:custom, "custom scenario with that name already exists.")
+      return scenario
+    end
+
+    FileUtils.mkdir path_custom
+    FileUtils.mkdir path_custom + "/recipes"
+
+    yml = {
+      "Name" => name,
+      "Description" => "",
+      "Instructions" => "",
+      "Roles" => nil,
+      "Groups" => nil,
+      "Clouds" => nil,
+      "Scoring" => nil,
+    }
+
+    File.open("#{path_custom}/#{name.downcase}.yml", "w") { |f| f.write(yml.to_yaml) }
+
+    scenario = Scenario.new(name: name, location: :custom, user_id: user.id)
+    scenario.save
+    return scenario
+  end
+
 	def obliterate_custom(name, user)
     path = "#{Rails.root}/scenarios/custom/#{user.id}/#{name.downcase}"
     if not File.exists? path

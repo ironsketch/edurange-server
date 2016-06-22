@@ -1,0 +1,54 @@
+---
+Name: TreasureHunt
+Description: 
+Instructions: ''
+InstructionsStudent: ''
+Groups:
+- Name: Instructor
+  Instructions: 
+  Access:
+    Administrator:
+    - TreasureHunt
+    User: []
+  Users:
+  - Login: instructor
+    Password: P3stOMen
+    Id: 
+    UserId: 
+    StudentGroupId: 
+- Name: Students
+  Instructions: 
+  Access:
+    Administrator: []
+    User:
+    - TreasureHunt
+  Users: 
+Clouds:
+- Name: Cloud
+  CIDR_Block: 10.0.0.0/16
+  Subnets:
+  - Name: Subnet
+    CIDR_Block: 10.0.0.0/16
+    Internet_Accessible: true
+    Instances:
+    - Name: TreasureHunt
+      OS: ubuntu
+      IP_Address: 10.0.0.4
+      IP_Address_Dynamic: 
+      Internet_Accessible: true
+      Roles:
+      - TreasureHunt
+Subnets: 
+Instances: 
+Roles:
+- Name: TreasureHunt
+  Packages:
+  - build-essential
+  - unzip
+  - ghostscript
+  - apache2
+  - git
+  - apache2-utils
+  Recipes:
+  - install
+Scoring: 
