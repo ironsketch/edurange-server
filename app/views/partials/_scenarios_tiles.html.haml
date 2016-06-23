@@ -1,0 +1,16 @@
+%p
+  #{fa_icon('circle', class: 'text-success')} = booted
+  #{fa_icon('circle-o')} = unbooted
+.row
+  %ul.scenario-list
+    - scenarios.each do |scenario|
+      %a{href: scenario_path(scenario)}
+        %li.scenario-tile.col-md-4
+          = scenario.name
+          - if scenario.booted?
+            = fa_icon('circle', class: 'text-success')
+          -else
+            = fa_icon('circle-o')
+          %p.small.text-muted
+            created
+            #{scenario.created_at.to_formatted_s(:short)}
