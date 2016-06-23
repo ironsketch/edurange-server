@@ -6,7 +6,8 @@ class User < ActiveRecord::Base
 
   has_many :scenarios
   has_many :student_groups, dependent: :destroy
-  has_many :student_group_users, dependent: :destroy
+  has_many :student_group_users, through: :student_groups, dependent: :destroy
+  has_many :students, through: :student_group_users, source: :user
 
   after_initialize :set_defaults, :if => :new_record?
   validates :email, uniqueness: true
