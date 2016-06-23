@@ -1,21 +1,19 @@
-class UserPolicy
-  attr_reader :user, :record
-
-  def initialize(user, record)
-    @user = user
-    @record = record
-  end
+class UserPolicy < ApplicationPolicy
 
   def index?
-    @user.admin?
+    @user.is_admin?
+  end
+
+  def show?
+    @user.is_admin? || @user.students.include?(@record)
   end
 
   def update?
-    @user.admin?
+    @user.is_admin? || @user.students.include?(@record)
   end
 
   def destroy?
-    @user.admin?
+    @user.is_admin? || @user.students.include?(@record)
   end
 
 end
