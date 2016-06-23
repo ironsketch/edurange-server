@@ -2,7 +2,14 @@
   .row
     %h3 Users
     .column
-      %table.table
+      %table.table.dataTable
+        %thead
+          %tr
+            %th Name
+            %th Email
+            %th Organization
+            %th Role
+            %th Actions
         %tbody
           - @users.each do |user|
             %tr
