@@ -13,6 +13,8 @@
 //= require jquery
 //= require jquery.turbolinks
 //= require jquery_ujs
+//= require dataTables/jquery.dataTables
+//= require dataTables/bootstrap/3/jquery.dataTables.bootstrap
 //= require bootstrap
 //= require underscore
 //= require bootstrap
@@ -25,3 +27,9 @@ function update_flash(message) {
     }
     $('#flash_notice').html(message);
 }
+
+$(document).ready(function() {
+    $('.dataTable').DataTable({
+        /* options... */
+    });
+});
