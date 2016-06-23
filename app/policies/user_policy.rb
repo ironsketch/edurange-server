@@ -1,7 +1,16 @@
 class UserPolicy < ApplicationPolicy
+  class Scope < Scope
+    def resolve
+      if @user.is_admin?
+        User.all
+      else
+        @user.students
+      end
+    end
+  end
 
   def index?
-    @user.is_admin?
+    not @user.students.empty?
   end
 
   def show?

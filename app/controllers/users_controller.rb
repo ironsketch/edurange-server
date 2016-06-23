@@ -1,10 +1,15 @@
 class UsersController < ApplicationController
   before_filter :authenticate_user!
-  after_action :verify_authorized
+  after_action :verify_authorized, except: :index
+  after_action :verify_policy_scoped, only: :index
 
   def index
-    @users = User.all
-    authorize @users
+    @users = policy_scope(User)
+
+    respond_to do |format|
+      format.html
+      format.json { render json: @users.to_json }
+    end
   end
 
   def show
