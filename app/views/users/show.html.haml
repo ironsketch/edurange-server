@@ -1,3 +1,63 @@
-%h3 User
-%p
-  Email: #{@user.email if @user.email}
+%h2
+  = @user.name
+  - if policy(@user).edit?
+    %span.small= link_to "Edit", edit_user_path(@user)
+%h3 Information
+%table.table
+  %tbody
+    %tr
+      %th{ scope: "row" } Name
+      %td= @user.name
+    %tr
+      %th{ scope: "row" } Email
+      %td= link_to @user.email, "mailto:#{@user.email}"
+    %tr
+      %th{ scope: "row" } Role
+      %td= @user.role.capitalize
+    - if @user.is_admin? or @user.is_instructor?
+      %tr
+        %th{ scope: "row" } Registration Code
+        - if @user.registration_code
+          %td= @user.registration_code
+        - else
+          %td.text-muted None
+    %tr
+      %th{ scope: "row" } Organization
+      - if @user.organization
+        %td= @user.organization
+      - else
+        %td.text-muted None
+    - if current_user.is_admin?
+      %tr
+        %th{ scope: "row" } Current Sign In IP
+        - if @user.current_sign_in_ip
+          %td= @user.current_sign_in_ip
+        - else
+          %td.text-muted None
+      %tr
+        %th{ scope: "row" } Last Sign
+        - if @user.last_sign_in_at
+          %td
+            = @user.last_sign_in_at.to_formatted_s(:long)
+            %span.small.text-muted from #{@user.last_sign_in_ip}
+        - else
+          %td.text-muted None
+      %tr
+        %th{ scope: "row" } Reset Password Token
+        - if @user.reset_password_token
+          %td
+            = @user.reset_password_token
+            %p.small.text-muted sent at #{@user.reset_password_sent_at.to_formatted_s(:long)}
+        - else
+          %td.text-muted None
+
+- if not @user.scenarios.empty?
+  %h3 Scenarios
+  = render 'partials/scenarios_tiles', scenarios: @user.scenarios
+- elsif @user.is_admin? or @user.is_instructor?
+  %h3 Scenarios
+  %p This user doesn't have any scenarios.
+
+// TODO: render students if not @user.students.empty?
+
+= link_to "Back", :back

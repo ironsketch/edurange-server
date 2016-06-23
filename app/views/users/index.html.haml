@@ -1,16 +1,13 @@
-.container
-  .row
-    %h3 Users
-    .column
-      %table.table.dataTable
-        %thead
-          %tr
-            %th Name
-            %th Email
-            %th Organization
-            %th Role
-            %th Actions
-        %tbody
-          - @users.each do |user|
-            %tr
-              = render user
+%h2 Users
+%table.table.dataTable
+  %thead
+    %tr
+      %th Name
+      %th Email
+      %th Organization
+      %th Role
+      %th Actions
+  %tbody
+    - @users.each do |user|
+      %tr
+        = render user

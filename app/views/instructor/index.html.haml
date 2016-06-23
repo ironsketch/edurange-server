@@ -5,7 +5,7 @@
   = render 'dashboard/panel_head'
   .panel-body
     .col-md-4
-      = render 'dashboard/account_information'
+      = render 'partials/user_information'
     .col-md-8
       %h2 Scenarios
       = render 'dashboard/scenarios', scenarios: @user.scenarios
