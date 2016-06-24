@@ -15,6 +15,7 @@
 //= require jquery_ujs
 //= require dataTables/jquery.dataTables
 //= require dataTables/bootstrap/3/jquery.dataTables.bootstrap
+//= require dataTables/extras/dataTables.select
 //= require bootstrap
 //= require underscore
 //= require bootstrap
@@ -30,6 +31,11 @@ function update_flash(message) {
 
 $(document).ready(function() {
     $('.dataTable').DataTable({
-        /* options... */
+        select: {
+            style:    'multi',
+            selector: ':checkbox',
+            blurable: true
+        },
+        order: [[ 1, 'asc' ]]
     });
 });

@@ -35,7 +35,7 @@ gem 'groupdate'
 gem 'active_median'
 gem 'rubyzip'
 gem 'font-awesome-rails'
-gem 'jquery-datatables-rails', '~> 3.3.0'
+gem 'jquery-datatables-rails', '~> 3.4.0'
 
 group :development do
   gem 'better_errors'

@@ -1,0 +1,16 @@
+
+
+@import 'select.dataTables.scss';
+@import 'bootstrap/variables';
+
+table.dataTable tbody {
+	tr.selected,
+	th.selected,
+	td.selected {
+		color: white;
+
+        .text-muted {
+            color: $gray-lighter;
+        }
+	}
+}
