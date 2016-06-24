@@ -179,5 +179,7 @@ Edurange::Application.routes.draw do
 
   root :to => "home#index"
   devise_for :users, :controllers => {:registrations => "registrations"}
-  resources :users
+  resources :users do
+    post :batch_action, on: :collection
+  end
 end

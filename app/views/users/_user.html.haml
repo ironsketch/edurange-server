@@ -1,4 +1,4 @@
-%td.text-center= check_box_tag "user_ids[]", user.id
+%td.text-center= check_box_tag "ids[]", user.id
 %td= user.name
 %td= user.email
 - if user.organization
@@ -9,6 +9,7 @@
 %td
   .btn-group
     = link_to "view", user_path(user), class: 'btn btn-xs btn-default'
-    = link_to "edit", edit_user_path(user), class: 'btn btn-xs btn-warning'
-    - if user != current_user
+    - if policy(user).edit?
+      = link_to "edit", edit_user_path(user), class: 'btn btn-xs btn-warning'
+    - if policy(user).destroy?
       = link_to "delete", user_path(user), data: { :confirm => "Are you sure?" }, method: :delete, class: 'btn btn-xs btn-danger'

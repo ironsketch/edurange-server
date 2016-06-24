@@ -30,12 +30,28 @@ function update_flash(message) {
 }
 
 $(document).ready(function() {
-    $('.dataTable').DataTable({
-        select: {
-            style:    'multi',
-            selector: ':checkbox',
-            blurable: true
-        },
+    table = $('.dataTable').DataTable({
+        columnDefs: [ {
+            orderable: false,
+            searchable: false,
+            targets:   0
+        } ],
         order: [[ 1, 'asc' ]]
+    });
+
+    // Handle click on "Select all" control
+    $('#select_all').on('click', function() {
+       var rows = table.rows({ 'search': 'applied' }).nodes();
+       $(':checkbox', rows).prop('checked', this.checked);
+    });
+
+    // Handle click on checkbox to set state of "Select all" control
+    $('tbody:checkbox').on('change', function() {
+       if (!this.checked) {
+          var el = $('#select_all').get(0);
+          if(el && el.checked && ('indeterminate' in el)){
+             el.indeterminate = true;
+          }
+       }
     });
 });
