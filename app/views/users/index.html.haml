@@ -1,8 +1,9 @@
 %h2 Users
 = form_tag batch_action_users_path, method: :post do
   .form-group
-    .btn-group.btn-group-sm
-      = submit_tag "delete selected", class: "btn btn-danger", data: { confirm: "Are you sure you want to delete ALL selected users?" }
+    %label{ for: "batch-actions" } With selected:
+    .btn-group.btn-group-sm#batch-actions
+      = submit_tag "delete", class: "btn btn-danger", data: { confirm: "Are you sure you want to delete ALL selected users?" }
 
   %table.table.dataTable
     %thead
