@@ -384,6 +384,7 @@ module Provider
         self.errors.add(:boot, "#{self.name} descendent \"#{d.name}\" unboot failed")
         d.set_booted
       end
+      d.update_attribute(:boot_code, "")
     end
 
     self.reload
