@@ -1,15 +1,12 @@
 %td= user.name
-%td= link_to user.email, "mailto:#{user.email}"
+%td= user.email
 - if user.organization
   %td= user.organization
 - else
   %td.text-muted None
+%td= user.role.titleize
 %td
-  = form_for(user) do |f|
-    = f.select(:role, User.roles.keys.map {|role| [role.titleize,role]})
-    = f.submit 'Change Role', :class => 'button-xs'
-%td
-  = link_to "View", user_path(user)
-  = link_to "Edit", edit_user_path(user)
+  = link_to "View", user_path(user), class: 'btn btn-xs btn-default'
+  = link_to "Edit", edit_user_path(user), class: 'btn btn-xs btn-warning'
   - if user != current_user
-    = link_to "Delete", user_path(user), data: { :confirm => "Are you sure?" }, method: :delete
+    = link_to "Delete", user_path(user), data: { :confirm => "Are you sure?" }, method: :delete, class: 'btn btn-xs btn-danger'
