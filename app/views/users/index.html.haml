@@ -1,9 +1,23 @@
-%h2 Users
+= content_for :heading do
+  Users
 = form_tag batch_action_users_path, method: :post do
   .form-group
-    %label{ for: "batch-actions" } With selected:
+    %label{ for: "batch-actions" } with selected:
     .btn-group.btn-group-sm#batch-actions
       = submit_tag "delete", class: "btn btn-danger", data: { confirm: "Are you sure you want to delete ALL selected users?" }
+      = link_to 'set organization', '#modal-set-organization', class: 'btn btn-warning', data: { toggle: 'modal' }
+
+  .modal#modal-set-organization{ :tabindex => "-1", :role => "dialog", "aria-hidden" => "true" }
+    .modal-dialog
+      .modal-content
+        .modal-body
+          .text-right
+            %button.close{ :type => "button", "data-dismiss" => "modal", "aria-hidden" => "true"}
+              &times;
+          .form-group
+            = label_tag "Organization"
+            = text_field_tag "organization", nil, class: 'form-control'
+          = submit_tag "update", :class => 'btn btn-primary'
 
   %table.table.dataTable
     %thead

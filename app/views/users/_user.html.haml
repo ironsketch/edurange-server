@@ -9,7 +9,22 @@
 %td
   .btn-group
     = link_to "view", user_path(user), class: 'btn btn-xs btn-default'
-    - if policy(user).edit?
-      = link_to "edit", edit_user_path(user), class: 'btn btn-xs btn-warning'
+    -#- if policy(user).edit?
+      = link_to "set role", "#modal-set-role-#{user.id}", class: 'btn btn-xs btn-warning', data: { toggle: 'modal' }
     - if policy(user).destroy?
       = link_to "delete", user_path(user), data: { :confirm => "Are you sure?" }, method: :delete, class: 'btn btn-xs btn-danger'
+-#.modal.modal-set-organization{ :tabindex => "-1", :role => "dialog", "aria-hidden" => "true", id: "modal-set-role-#{user.id}" }
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %button.close{ :type => "button", "data-dismiss" => "modal", "aria-hidden" => "true"}
+          &times;
+        %h3.modal-title.inline#title
+          Set role for #{user.name}
+      .modal-body
+        = form_tag edit_user_path(user), remote: true, method: :post do
+          = select_tag 'role', User.roles
+          = submit_tag "Submit", :class => 'btn btn-default'
+      .modal-footer
+        %button.btn.btn-default{"data-dismiss" => "modal"} Close
+

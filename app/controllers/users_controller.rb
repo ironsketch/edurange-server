@@ -29,13 +29,13 @@ class UsersController < ApplicationController
     if @user.update_attributes(secure_params)
       flash[:notice] = "#{@user.name} updated"
       respond_to do |format|
-        format.html { redirect_to users_path }
+        format.html { redirect_to (:back || user_path(@user)) }
         format.json { render json: @user.to_json }
       end
     else
       respond_to do |format|
         flash[:error] = @user.errors.full_messages.to_sentence
-        format.html { redirect_to users_path }
+        format.html { redirect_to (:back || user_path(@user)) }
         format.json { render json: { "errors" => @user.errors.to_json } }
       end
     end
@@ -55,8 +55,12 @@ class UsersController < ApplicationController
   end
 
   def batch_action
-    if params[:commit] == "delete"
+    if not params[:ids]
+      redirect_to :back || users_path
+    elsif params[:commit] == "delete"
       destroy_selected
+    elsif params[:commit] == "update"
+      update_selected
     else
       redirect_to :back || users_path
     end
@@ -78,10 +82,26 @@ class UsersController < ApplicationController
     end
   end
 
+  def update_selected
+    names = []
+    params[:ids].each do |id|
+      user = User.find(id)
+      authorize user, :update?
+      names << user.name
+      user.update_attributes(secure_params)
+    end
+
+    flash[:notice] = "#{names.to_sentence} updated"
+    respond_to do |format|
+      format.html { redirect_to (:back || users_path) }
+      format.json { head :success }
+    end
+  end
+
   private
 
   def secure_params
-    params.require(:user).permit(:role)
+    params.permit(:role, :organization)
   end
 
 end

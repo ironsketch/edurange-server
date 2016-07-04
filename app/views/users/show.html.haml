@@ -1,6 +1,7 @@
 = link_to "Back", :back
 
-%h2= @user.name
+= content_for :heading do
+  = @user.name
 
 %h3 Information
 %table.table
@@ -60,11 +61,7 @@
 
 // TODO: render students if not @user.students.empty?
 
-%div
-  .btn-group{ role: "group" }
-    - if policy(@user).edit?
-      = link_to "edit", edit_user_path(@user), class: 'btn btn-warning'
-    - if policy(@user).destroy?
-      = link_to "destroy", user_path(@user), method: :delete, class: 'btn btn-danger', data: { confirm: "Are you sure you want to delete this user?" }
+- if policy(@user).destroy?
+  = link_to "destroy user", user_path(@user), method: :delete, class: 'btn btn-danger', data: { confirm: "Are you sure you want to delete user #{@user.name}?" }
 
 = link_to "Back", :back

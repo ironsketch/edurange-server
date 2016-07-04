@@ -6,4 +6,8 @@
       = render 'layouts/navigation'
     %main{:role => "main"}
       = render 'layouts/messages'
-      = yield
+      .panel.panel-default
+        .panel-heading
+          %h3= yield :heading
+        .panel-body
+          = yield

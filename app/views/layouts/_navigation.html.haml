@@ -9,6 +9,11 @@
       %li{role: 'presentation', class: (params[:controller] == 'instructor' or params[:controller] == 'admin') ? "active" : "" }
         = link_to 'Home', root_path
 
+      - if current_user.is_admin?
+
+        %li{role: 'presentation', class: (params[:controller] == 'users') ? "active" : "" }
+          = link_to 'Users', users_path
+
       - if User.find(current_user.id).is_instructor? or User.find(current_user.id).is_admin?
 
         %li{role: 'presentation', class: params[:controller] == 'scenarios' ? "active" : "" }
