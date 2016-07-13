@@ -258,56 +258,56 @@ class ScenariosController < ApplicationController
   # BOOTING
 
   def boot
-    @scenario.boot_all(false, true, true)
+    @scenario.delay(queue: 'scenario').boot(background: true)
     respond_to do |format|
       format.js { render 'scenarios/js/boot/boot_scenario.js.erb', :layout => false }
     end
   end
 
   def unboot
-    @scenario.unboot_all(false, true, true)
+    @scenario.delay(queue: 'scenario').unboot(background: true)
     respond_to do |format|
       format.js { render 'scenarios/js/boot/unboot_scenario.js.erb', :layout => false }
     end
   end
 
   def boot_cloud
-    @cloud.boot_single(:boot, false, true, true)
+    @cloud.delay(queue: 'cloud').boot(background: true)
     respond_to  do |format|
       format.js { render template: 'scenarios/js/boot/boot_cloud.js.erb', layout: false }
     end
   end
 
   def unboot_cloud
-    @cloud.boot_single(:unboot, false, true, true)
+    @cloud.delay(queue: 'cloud').unboot(background: true)
     respond_to do |format|
       format.js { render template: 'scenarios/js/boot/unboot_cloud.js.erb',  layout: false }
     end
   end
 
   def boot_subnet
-    @subnet.boot_single(:boot, false, true, true)
+    @subnet.delay(queue: 'subnet').boot(background: true)
     respond_to do |format|
       format.js { render template: 'scenarios/js/boot/boot_subnet.js.erb', layout: false }
     end
   end
 
   def unboot_subnet
-    @subnet.boot_single(:unboot, false, true, true)
+    @subnet.delay(queue: 'subnet').unboot(background: true)
     respond_to do |format|
       format.js { render template: 'scenarios/js/boot/unboot_subnet.js.erb', layout: false }
     end
   end
 
   def boot_instance
-    @instance.boot_single(:boot, false, true, true)
+    @instance.delay(queue: 'instance').boot(background: true)
     respond_to do |format|
       format.js { render template: 'scenarios/js/boot/boot_instance.js.erb', layout: false }
     end
   end
 
   def unboot_instance
-    @instance.boot_single(:unboot, false, true, true)
+    @instance.delay(queue: 'instance').unboot(background: true)
     respond_to do |format|
       format.js { render template: 'scenarios/js/boot/unboot_instance.js.erb', layout: false }
     end

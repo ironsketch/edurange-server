@@ -1,6 +1,5 @@
 class Instance < ActiveRecord::Base
   include Provider
-  include Aws
   require 'open-uri'
   require 'dynamic_ip'
 
@@ -241,7 +240,7 @@ class Instance < ActiveRecord::Base
   end
 
   def ssh_ready?
-    if ip = self.aws_instance_public_ip
+    if ip = self.ip_address_public
       if (self.port_open?(ip, 22))
         return true
       end

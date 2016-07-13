@@ -45,8 +45,8 @@ update_status('scenario', '<%= @scenario_status %>')
       $("#instance-<%= instance.id %>-role-add-button-li").attr('class', '<%= @scenario.stopped? ? "" : "disabled" %>');
 
       $("#instance-<%= instance.id %>-driver").text('<%= instance.driver_id ? instance.driver_id : "not set" %>');
-      <% if instance.internet_accessible %>
-        $("#instance-<%= instance.id %>-public-ip").text('<%= instance.provider_instance_public_ip ? instance.provider_instance_public_ip : "-"  %>');
+      <% if instance.ip_address_public %>
+        $("#instance-<%= instance.id %>-public-ip").text('<%= instance.ip_address_public %>');
       <% end %>
       $("#instance-<%= instance.id %>-driver").text('<%= instance.driver_id ? instance.driver_id : "not set" %>');
       $("#instance-<%= instance.id %>-ssh-ready").text('<%= instance.ssh_ready? ? "true" : "-" %>');

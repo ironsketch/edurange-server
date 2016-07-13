@@ -54,7 +54,7 @@
       %div{ id: "instance-#{instance.id}-public-ip-div"}
         Public IP:
         %span{id: "instance-#{instance.id}-public-ip" }
-          = instance.provider_instance_public_ip ? instance.provider_instance_public_ip : "-"
+          = instance.ip_address_public ? instance.ip_address_public : "-"
         %br
         SSH Ready:
         %span{id: "instance-#{instance.id}-ssh-ready" }

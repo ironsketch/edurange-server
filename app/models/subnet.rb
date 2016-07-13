@@ -1,7 +1,5 @@
 class Subnet < ActiveRecord::Base
   include Provider
-  include Aws
-  include Cidr
 
   belongs_to :cloud
   has_many :instances, dependent: :destroy
@@ -63,8 +61,8 @@ class Subnet < ActiveRecord::Base
       elsif not /^\d*\d$/.match(mask)
         errors.add(:cidr_block, "Subnet mask is invalid!")
         return
-      elsif not (mask.to_i >= MAX_CLOUD_CIDR_BLOCK and mask.to_i <= MIN_CLOUD_CIDR_BLOCK)
-        errors.add(:cidr_block, "Subnet mask must be between #{MAX_CLOUD_CIDR_BLOCK} - #{MIN_CLOUD_CIDR_BLOCK}")
+      elsif not (mask.to_i >= 16 and mask.to_i <= 28)
+        errors.add(:cidr_block, "Subnet mask must be between #{16} - #{28}")
         return
       end
     else

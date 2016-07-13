@@ -311,5 +311,187 @@ class BootTest < ActiveSupport::TestCase
 
   # end
 
+  # test 'docker boot' do
+  #   return if Rails.configuration.x.provider != 'docker'
+  #   scenario = create_scenario(users(:instructor999999999), :test, 'Boot_Test_4')
+  #   scenario.boot_all(false, false, true)
+  # end
+
+  # test 'provider test' do
+  #   scenario = create_scenario(users(:instructor999999999), :test, 'Boot_Test_5')
+
+  #   # fail if driver id is set
+  #   scenario.clouds.first.update_attribute(:driver_id, 'foo')
+  #   scenario.boot_all(pretend: false, console_print: true)
+  #   assert scenario.errors.any?
+
+  #   # make sure all descendents are released
+  #   assert scenario.descendents.select { |d| d.boot_code != ''}.size == 0
+
+  # end
+
+  # test 'resource deletes in middle of boot' do
+  #   return
+  #   scenario = create_scenario(users(:instructor999999999), :test, 'Boot_Test_5')
+
+  #   # delete parent during boot
+  #   scenario.boot(pretend: true, resources: {
+  #       "Cloud1" => {
+  #         wait: 10
+  #       }
+  #     }
+  #   )
+
+  #   # delete child during unboot
+  # end
+
+  # test 'test 5' do
+  #   25.times do |n|
+  #     scenario = create_scenario(users(:instructor999999999), :test, 'Boot_Test_5')
+
+  #     puts "Booting #{n}"
+  #     if not scenario.boot(background: true, console_print: false)
+  #       puts scenario.log_last
+  #       assert false, "Boot failed"
+  #     end
+
+  #     puts "Unbooting #{n}"
+  #     if not scenario.unboot(background: true, console_print: false)
+  #       puts scenario.log_last
+  #       assert false, "Unboot failed"
+  #     end
+  #   end
+  # end
+
+  # test 'aws test' do
+
+  #   return
+
+  #   scenario = create_scenario(users(:instructor999999999), :test, 'Boot_Test_5')
+
+  #   cloud = scenario.clouds.first
+  #   subnet = scenario.subnets.first
+  #   instance = scenario.instances.first
+
+  #   cloud.boot(pretend: true)
+  #   puts cloud.errors.messages
+  #   # assert_not cloud.errors.any?
+
+  #   return
+
+  #   subnet.boot
+  #   assert_not subnet.errors.any?
+
+  #   instance.boot
+  #   assert_not instance.errors.any?
+
+  #   # instance.unboot
+  #   # assert_not instance.errors.any?
+
+  #   subnet.unboot
+  #   assert_not subnet.errors.any?
+
+  #   cloud.unboot
+  #   assert_not cloud.errors.any?
+
+  #   return
+
+  #   # boot Cloud save driver for later
+  #   cloud = scenario.clouds.first
+  #   cloud.boot
+  #   assert_not cloud.errors.any?
+  #   assert cloud.booted?
+  #   cloud_driver_id = cloud.driver_id
+
+  #   # try and boot cloud again make sure there is a boot error
+  #   cloud.boot
+  #   assert cloud.errors.any?
+  #   cloud.errors.clear
+
+  #   # boot subnet save driver for later
+  #   subnet = cloud.subnets.first
+  #   subnet.boot
+  #   assert_not subnet.errors.any?
+  #   assert subnet.booted?
+  #   subnet_driver_id = cloud.driver_id
+
+  #   # unboot subnet
+  #   subnet.unboot
+  #   assert_not subnet.errors.any?
+  #   assert subnet.stopped?
+
+  #   # try to unboot again and make sure error happens
+  #   subnet.unboot
+  #   assert subnet.errors.any?
+  #   subnet.errors.clear
+
+  #   # reinstate old driver id and try and unboot
+  #   # this should still unboot ignoring and clearing the bad driver id
+  #   subnet.update_attribute(:driver_id, subnet_driver_id)
+  #   subnet.set_booted
+  #   subnet.unboot
+  #   assert_not subnet.errors.any?
+
+  #   # set a bogus driver id and trya and boot
+  #   # this should still unboot ignoring and clearing the bad driver id
+  #   subnet.update_attribute(:driver_id, 'bogus')
+  #   subnet.set_booted
+  #   subnet.unboot
+  #   assert_not subnet.errors.any?
+
+  #   # unboot cloud
+  #   cloud.unboot
+  #   assert_not cloud.errors.any?
+  #   assert cloud.stopped?
+
+  #   # try to unboot again and make sure error happens
+  #   cloud.unboot
+  #   assert cloud.errors.any?
+  #   cloud.errors.clear
+
+  #   # reinstate old driver id and try and unboot
+  #   # this should still unboot 
+  #   cloud.update_attribute(:driver_id, cloud_driver_id)
+  #   cloud.set_booted
+  #   cloud.unboot
+  #   assert_not cloud.errors.any?
+
+  #   # set a bogus driver id and trya and boot
+  #   cloud.update_attribute(:driver_id, 'bogus')
+  #   cloud.set_booted
+  #   cloud.unboot
+  #   assert_not cloud.errors.any?
+
+
+  #   return
+
+  #   # boot scenario
+  #   puts "Booting Scenario:"
+  #   scenario.boot_all(console_print: true)
+  #   assert_not scenario.errors.any?
+
+  #   # save driver id of VPC
+  #   driver_id = scenario.clouds.first.driver_id
+
+  #   # unboot scenario
+  #   puts "\nUnbooting Scenario:"
+  #   scenario.unboot_all(console_print: true)
+  #   assert_not scenario.errors.any?
+
+  #   # set cloud to booted with old driver id
+  #   scenario.clouds.first.update_attribute(:driver_id, driver_id)
+  #   scenario.clouds.first.set_booted
+  #   puts "\nUnbooting Scenario with old driver id '#{driver_id}':"
+
+  #   # try and unboot it now with the old driver id
+  #   scenario.unboot_all(console_print: true)
+
+  #   assert scenario.stopped?, scenario.status
+  #   assert scenario.clouds.first.stopped?, scenario.clouds.first.status
+  #   assert_not scenario.clouds.first.driver_id, scenario.clouds.first.driver_id
+
+  # end
+
+
 
 end
