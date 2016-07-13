@@ -21,7 +21,6 @@ if Rails.configuration.x.provider == 'aws'
     end
 
     puts ""
-    raise 'AWS Config Error'
   end
 
   # get iam user name and set some aws configs

@@ -2,9 +2,8 @@
   %td= user.name
   %td= user.email
   %td= user.organization
-  %td.text-right
-    = link_to 'delete', admin_user_delete_path(id: user.id), remote: true, method: :post, :data => { :confirm => "Are you sure you want to delete Instructor #{user.name}?" }
-    |
-    = link_to 'make student', admin_instructor_to_student_path(id: user.id), remote: true, method: :post, :data => { :confirm => "Are you sure you want to make Instructor #{user.name} a student? This will erase all students accounts belonging to instructor." }
-    |
-    = link_to 'reset password', admin_reset_password_path(id: user.id), remote: true, method: :post, :data => { :confirm => "This will assign the user a random password and email it to them. Are you sure?" }
+  %td
+    .btn-group.btn-group-xs
+      = link_to 'delete', admin_user_delete_path(id: user.id), remote: true, method: :post, :data => { :confirm => "Are you sure you want to delete Instructor #{user.name}?" }, class: 'btn btn-default'
+      = link_to 'make student', admin_instructor_to_student_path(id: user.id), remote: true, method: :post, :data => { :confirm => "Are you sure you want to make Instructor #{user.name} a student? This will erase all students accounts belonging to instructor." }, class: 'btn btn-default'
+      = link_to 'reset password', admin_reset_password_path(id: user.id), remote: true, method: :post, :data => { :confirm => "This will assign the user a random password and email it to them. Are you sure?" }, class: 'btn btn-default'
