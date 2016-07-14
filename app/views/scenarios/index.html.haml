@@ -68,11 +68,11 @@
           %td= scenario.name
           %td= scenario.status
           - if @user.is_admin?
-            - if scenario.user_id
-              %td= User.find(scenario.user_id).name
+            - if not scenario.user.nil?
+              %td= scenario.user.name
             - else
-              %td
+              %td.text-muted None
           %td
-            %div.btn-group
+            %div.btn-group.btn-group-xs
               = link_to 'Show', scenario, class: 'btn btn-default'
               = link_to 'Destroy', destroyme_scenario_path(scenario), method: :post, remote: true, :data => { :confirm => 'Are you sure?' }, class: 'btn btn-danger'
