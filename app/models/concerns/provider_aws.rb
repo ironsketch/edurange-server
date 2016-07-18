@@ -316,6 +316,25 @@ module ProviderAws
     end
   end
 
+  def aws_instance_S3_files_save_no_log
+    time = Time.now.strftime("%y_%m_%d")
+    bucket = aws_call('aws_S3_bucket_get', name: Rails.configuration.x.aws['s3_bucket_name'])
+
+    path = self.scenario.statistic.data_path_instance(self.name)
+
+    File.open(self.scenario.statistic.data_instance_bash_histories_path(self.name), "wb") do |f|
+      f.write(aws_S3_object_get_and_read_no_log(bucket, aws_S3_object_name('bash_history')) )
+    end
+
+    File.open(self.scenario.statistic.data_instance_exit_statuses_path(self.name), "wb") do |f|
+      f.write(aws_S3_object_get_and_read_no_log(bucket, aws_S3_object_name('exit_status')) )
+    end
+
+    File.open(self.scenario.statistic.data_instance_script_logs_path(self.name), "wb") do |f|
+      f.write(aws_S3_object_get_and_read_no_log(bucket, aws_S3_object_name('script_log')) )
+    end
+  end
+
   def aws_instance_S3_files_create
     bucket = aws_call('aws_S3_bucket_get', name: Rails.configuration.x.aws['s3_bucket_name'])
     if not aws_call('aws_obj_exists?', obj: bucket)
@@ -390,6 +409,16 @@ module ProviderAws
     object = aws_call('aws_S3_object_get', bucket: bucket, name: name)
     if aws_call('aws_obj_exists?', obj: object)
       log "AWS: reading S3Object '#{object.key}'"
+      return aws_call('aws_S3_object_read', object: object)
+    end
+    return ""
+  rescue AWS::S3::Errors::NoSuchKey => e
+    return ""
+  end
+
+  def aws_S3_object_get_and_read_no_log(bucket, name)
+    object = aws_call('aws_S3_object_get', bucket: bucket, name: name)
+    if aws_call('aws_obj_exists?', obj: object)
       return aws_call('aws_S3_object_read', object: object)
     end
     return ""
