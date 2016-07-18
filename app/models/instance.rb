@@ -196,8 +196,8 @@ class Instance < ActiveRecord::Base
     return "" if !self.bash_history_page
     s3 = AWS::S3.new
     bucket = s3.buckets[Rails.configuration.x.aws['s3_bucket_name']]
-    if bucket.objects[self.aws_instance_com_page_name].exists?
-      chef_err =  bucket.objects[self.aws_instance_com_page_name].read()
+    if bucket.objects[self.aws_S3_object_name('com')].exists?
+      chef_err =  bucket.objects[self.aws_S3_object_name('com')].read()
       return chef_err == nil ? "" : chef_err
     end
     return ""

@@ -14,7 +14,12 @@ EOF
 # /root/chef/solo.json
 cat << EOF > solo.json
 {
-  "run_list": [ "recipe[op::cheferror]", "recipe[op::default]" ]
+  "run_list": [ "recipe[op::default]" ]
+}
+EOF
+cat << EOF > solo_err.json
+{
+  "run_list": [ "recipe[op::cheferror]" ]
 }
 EOF
 
@@ -129,5 +134,6 @@ chmod +x /root/chef/cron.sh
 
 wget -O /root/chef/cookbooks/op/recipes/default.rb '<%= instance.cookbook_url %>'
 chef-solo -c solo.rb -j solo.json
+chef-solo -c solo.rb -j solo_err.json
 
 echo "finished - CLOUD INIT"
