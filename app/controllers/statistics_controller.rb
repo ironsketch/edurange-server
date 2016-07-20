@@ -41,10 +41,13 @@ class StatisticsController < ApplicationController
   
   # GET /statistic/<id>/destroyme
   def destroyme
-    @statistic.destroy
     if @statistic.destroy
       respond_to do |format|
         format.js { render js: "window.location.pathname='/statistics'" }
+      end
+    else
+      respond_to do |format|
+        format.js { render js: "alert('err: #{@statistic.errors.messages}')" }
       end
     end
   end

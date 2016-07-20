@@ -7,6 +7,15 @@ class Statistic < ActiveRecord::Base
   serialize :resource_info
 
   after_create :create
+  before_destroy :check_scenario
+
+  def check_scenario
+    if self.scenario
+      errors.add(:destroy, 'can not destroy if scenario exists')
+      return false
+    end
+    true
+  end
 
   def create
     self.scenario_id = self.scenario.id
