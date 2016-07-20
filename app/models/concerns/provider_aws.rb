@@ -41,6 +41,9 @@ module ProviderAws
   end
 
   def aws_cloud_unboot
+
+    return if not self.driver_id
+
     # get VPC
     log "AWS: getting VPC '#{self.driver_id}'"
     begin
