@@ -17,7 +17,7 @@
             = text_field_tag "organization", nil, class: 'form-control'
           = submit_tag "update", :class => 'btn btn-primary'
 
-  %table.table.dataTable
+  %table.table.table-striped.dataTable
     %thead
       %tr
         %th.text-center= check_box_tag "select_all", 1

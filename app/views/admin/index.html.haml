@@ -11,16 +11,16 @@
 
 .col-md-8
   - if @user.is_admin? || @user.is_instructor?
-    %h2 Your Scenarios
+    %h3 Your Scenarios
     = render 'dashboard/scenarios', scenarios: @user.scenarios
 
   - if @user.is_instructor? || @user.is_admin?
-    %h2 Your Students
+    %h3 Your Students
     %p Register students by giving them the <b>registration code</b> on the left.
     = render 'users/table', users: @user.students
 
   - if @user.is_admin?
-    %h2 Instructors
+    %h3 Instructors
     %span.pull-right= link_to "+ create instructor", "#modal-create-instructor", class: 'btn btn-sm btn-primary', :data => {:toggle=>"modal"}
     = render 'users/table', users: @instructors
 

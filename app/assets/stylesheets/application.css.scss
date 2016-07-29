@@ -128,13 +128,20 @@ ul.scenario-list a {
 
 ul.scenario-list li {
     padding: 10px;
-    border: 2px solid $panel-bg;
+    border: 1px solid $panel-bg;
     display: inline-block;
+    background: $gray-lighter;
+    border-radius: 5px;
 }
 
 
 ul.scenario-list a :hover {
-    background: $gray-lighter;
+    background: $brand-primary;
+    color: $panel-primary-text;
+}
+
+ul.scenario-list a:hover p {
+    color: $panel-primary-text;
 }
 
 table.dataTable thead th {
