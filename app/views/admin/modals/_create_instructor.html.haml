@@ -6,10 +6,9 @@
           &times;
         %h3.modal-title.inline#title= "Create Instructor"
       %div.modal-body#modalbody
-        = form_tag admin_instructor_create_path, remote:true, method: :post do 
+        = form_tag admin_instructor_create_path, method: :post do 
           %div#email-div
-            This will assign a random password for the instructor and will automatically send an email to the instructor with their credentials.
-            %p
+            %p This will assign a random password for the instructor and will automatically send an email to the instructor with their credentials.
             = label_tag nil, 'Email:', class: 'control-label'
             = text_field_tag :email, nil, class: 'form-control'
             %span.help-block.inline#email-help

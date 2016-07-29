@@ -29,6 +29,7 @@ class AdminController < ApplicationController
 
     respond_to do |format|
       format.js { render 'admin/js/instructor_create.js.erb', :layout => false }
+      format.html { redirect_to @user }
     end
   end
 
