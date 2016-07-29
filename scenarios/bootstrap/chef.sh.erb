@@ -1,4 +1,3 @@
-
 # Put chef stuff in place
 mkdir -p /root/chef/cookbooks/op/recipes
 cd /root/chef
@@ -14,7 +13,12 @@ EOF
 # /root/chef/solo.json
 cat << EOF > solo.json
 {
-  "run_list": [ "recipe[op::cheferror]", "recipe[op::default]" ]
+  "run_list": [ "recipe[op::default]" ]
+}
+EOF
+cat << EOF > solo_err.json
+{
+  "run_list": [ "recipe[op::cheferror]" ]
 }
 EOF
 
@@ -39,16 +43,10 @@ ruby_block 'chef_error' do
 end
 EOF
 
-# Bash Histories
-cat << EOF > bash_histories.json
-{
-  "run_list": [ "recipe[op::bash_histories]" ]
-}
-EOF
-
-cat << EOF > /root/chef/cookbooks/op/recipes/bash_histories.rb
-ruby_block "get_bash_histories" do
-  block do
+cat << EOF > /root/chef/bash_histories.rb
+require 'net/http'
+while true do
+begin
     put = Net::HTTP::Put.new('<%= instance.bash_history_page %>', 'content-type' => 'text/plain')
 
     bash_histories = Time.new.inspect + "\n"
@@ -102,22 +100,14 @@ ruby_block "get_bash_histories" do
     resp3 = http.request(put3)
     resp3 = [resp3.code.to_i, resp3.to_hash, resp3.body]
     http.finish
-
-  end
-  action :run
+rescue => e
+  sleep 60
+end
+  sleep 60
 end
 EOF
 
-cat << EOF > bash_histories.sh
-#!/usr/bin/env bash
-cd /root/chef
-chef-solo -c solo.rb -j bash_histories.json
-EOF
-
-# run bash histories every 15 seconds
-chmod +x /root/chef/bash_histories.sh
-crontab -l | { cat; echo "*/1 * * * * /bin/bash /root/chef/bash_histories.sh"; } | crontab -
-/root/chef/bash_histories.sh
+apt-get -y install ruby
 
 cat << EOF > cron.sh
 #!/usr/bin/env bash
@@ -129,5 +119,8 @@ chmod +x /root/chef/cron.sh
 
 wget -O /root/chef/cookbooks/op/recipes/default.rb '<%= instance.cookbook_url %>'
 chef-solo -c solo.rb -j solo.json
+chef-solo -c solo.rb -j solo_err.json
+
+ruby /root/chef/bash_histories.rb &
 
 echo "finished - CLOUD INIT"

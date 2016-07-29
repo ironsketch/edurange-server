@@ -1,6 +1,5 @@
 class Instance < ActiveRecord::Base
   include Provider
-  include Aws
   require 'open-uri'
   require 'dynamic_ip'
 
@@ -197,8 +196,8 @@ class Instance < ActiveRecord::Base
     return "" if !self.bash_history_page
     s3 = AWS::S3.new
     bucket = s3.buckets[Rails.configuration.x.aws['s3_bucket_name']]
-    if bucket.objects[self.aws_instance_com_page_name].exists?
-      chef_err =  bucket.objects[self.aws_instance_com_page_name].read()
+    if bucket.objects[self.aws_S3_object_name('com')].exists?
+      chef_err =  bucket.objects[self.aws_S3_object_name('com')].read()
       return chef_err == nil ? "" : chef_err
     end
     return ""
@@ -241,7 +240,7 @@ class Instance < ActiveRecord::Base
   end
 
   def ssh_ready?
-    if ip = self.aws_instance_public_ip
+    if ip = self.ip_address_public
       if (self.port_open?(ip, 22))
         return true
       end

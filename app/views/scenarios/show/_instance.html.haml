@@ -29,6 +29,11 @@
     &#9679;
   %div{ id: "instance-#{instance.id}-spinner", class: "inline-block #{(instance.booting? or instance.unbooting?) ? 'spin' : ''}" }
   %br
+  - hidden = (instance.initialized? == "chef script error") ? '' : 'hidden'
+  %span{id: "instance-#{instance.id}-initialized-error", class: hidden }
+    Chef Error
+    = link_to 'view', instance_chef_error_scenario_path(instance_id: instance), remote: true, method: :post
+    %br
   Driver:
   %span{id: "instance-#{instance.id}-driver" }
     = instance.driver_id == nil ? "not set" : instance.driver_id
@@ -54,15 +59,12 @@
       %div{ id: "instance-#{instance.id}-public-ip-div"}
         Public IP:
         %span{id: "instance-#{instance.id}-public-ip" }
-          = instance.provider_instance_public_ip ? instance.provider_instance_public_ip : "-"
+          = instance.ip_address_public ? instance.ip_address_public : "-"
         %br
         SSH Ready:
         %span{id: "instance-#{instance.id}-ssh-ready" }
           = instance.ssh_ready? ? "true" : '-'
   %span{id: "instance-#{instance.id}-initialized" }
-  - hidden = (instance.initialized? == "chef script error") ? '' : 'hidden'
-  %span{id: "instance-#{instance.id}-initialized-error", class: hidden }
-    = link_to 'view', instance_chef_error_scenario_path(instance_id: instance), remote: true, method: :post
   OS:
   %span{ id: "instance-#{instance.id}-os" }
     = instance.os

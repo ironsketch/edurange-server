@@ -7,6 +7,15 @@ class Statistic < ActiveRecord::Base
   serialize :resource_info
 
   after_create :create
+  before_destroy :check_scenario
+
+  def check_scenario
+    if self.scenario
+      errors.add(:destroy, 'can not destroy if scenario exists')
+      return false
+    end
+    true
+  end
 
   def create
     self.scenario_id = self.scenario.id
@@ -402,7 +411,7 @@ class Statistic < ActiveRecord::Base
   def data_fetch
     return if not scenario_exists?
     self.scenario.instances.each do |instance|
-      instance.aws_instance_S3_files_save({})
+      instance.aws_instance_S3_files_save_no_log
     end
   end
 

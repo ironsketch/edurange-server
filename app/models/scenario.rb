@@ -1,5 +1,4 @@
 class Scenario < ActiveRecord::Base
-  include Aws
   include Provider
   require 'open-uri'
 
@@ -130,6 +129,7 @@ class Scenario < ActiveRecord::Base
       self.instructions = file["Instructions"] if file["Instructions"]
       self.uuid = `uuidgen`.chomp
       self.answers = ''
+      self.save
 
       ip_lookup_hash = {}
 

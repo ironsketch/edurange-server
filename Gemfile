@@ -36,6 +36,7 @@ gem 'active_median'
 gem 'rubyzip'
 gem 'font-awesome-rails'
 gem 'jquery-datatables-rails', '~> 3.4.0'
+gem 'dotenv-rails', :groups => [:development, :test]
 
 group :development do
   gem 'better_errors'

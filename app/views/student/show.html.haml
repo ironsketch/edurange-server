@@ -80,7 +80,7 @@
                 - if instance.internet_accessible
                   %br
                   %label Public IP Address:
-                  = instance.provider_instance_public_ip ? instance.provider_instance_public_ip : "not set"
+                  = instance.ip_address_public ? instance.ip_address_public : "not set"
                 %br
                 %label IP Address:
                 = instance.ip_address
