@@ -1,4 +1,4 @@
-= render 'admin/modals/create_instructor'
+= render 'admin/modals/create_instructor' if @user.is_admin?
 = render 'admin/modals/student_group_create'
 = render 'admin/modals/student_group_user_add'
 
@@ -7,67 +7,20 @@
 
 .col-md-4
   = render 'partials/user_information'
-  = render 'dashboard/aws_settings'
+  = render 'dashboard/aws_settings' if @user.is_admin?
 
 .col-md-8
-  %h2 Scenarios
-  = render 'dashboard/scenarios', scenarios: @user.scenarios
+  - if @user.is_admin? || @user.is_instructor?
+    %h2 Scenarios
+    = render 'dashboard/scenarios', scenarios: @user.scenarios
 
-  %h2 Instructors
-
-  %span.pull-right= link_to '+ create instructor', "#modal-create-instructor", :data => {:toggle=>"modal"}, |
-          onclick: "$('#modal-create-instructor').find('#email').val('');" +                  |
-                   "$('#modal-create-instructor').find('#name').val('');" +                   |
-                   "$('#modal-create-instructor').find('#organization').val('');"             |
-
-  = render 'users/table', users: @instructors
-  -#%table.table#instructors-table
-    %tr
-      %th Name
-      %th Email
-      %th Organization
-      %th
-    - @instructors.each do |user|
-      = render 'instructor', user: user
-
-  %h2 Students
-
-  = render 'users/table', users: @students
-
-  -#%label
-    Students:
-    = link_to 'expand/collapse', '#students-table',
-        data: { toggle: 'collapse', target: '#students-table-collapse' }
-
-  -#%dl
-    %div.collapse.in#students-table-collapse
-      = form_tag '#', method: :post, remote: true, class: 'form-inline', id: 'students-table-form' do
-        = hidden_field_tag 'action', value: 'delete'
-        %table.table#students-table
-          %tr
-            %td
-              <a href="javascript:$('#students-table input:checkbox').prop('checked', true);">all</a>,
-              <a href="javascript:$('#students-table input:checkbox').prop('checked', false);">none</a>
-            %th Name
-            %th Email
-            %th Organization
-            %th
-          - @students.each do |user|
-            = render 'student', user: user
-          %tr#foot
-            %td{ colspan: "5" }
-              <a href="javascript:$('#students-table input:checkbox').prop('checked', true);">all</a>,
-              <a href="javascript:$('#students-table input:checkbox').prop('checked', false);">none</a>,
-              %b with selected:
-              = (link_to 'add to all', "javascript:void(0);",
-                onclick: "$('#students-table-form').attr('action', '#{admin_student_add_to_all_path}');$('#students-table-form').submit();") + ','
-              = link_to('delete', "javascript:void(0);", remote: true, method: :post,
-                onclick: "$('#students-table-form').attr('action', '#{admin_user_delete_path}');$('#students-table-form').submit();",
-                :data => { :confirm => "Are you sure you want to delete all selected students?" })
-
-  -#%span.pull-right= link_to '+ create student group', '#modal-student-group-create', data: {toggle: "modal"}, onclick: "$('#modal-student-group-create').find('#name-div').removeClass('has-error'); $('#modal-student-group-create').find('#name').val(''); $('#modal-student-group-create').find('#name-help').html(''); "
-  -#%label Student groups:
-  -#%dl
-    %dl{ id: "student-groups" }
-      - @user.student_groups.each do |student_group|
-        = render 'student_group', student_group: student_group, scenario: @scenario
+  - if @user.is_admin?
+    %h2 Instructors
+    %span.pull-right= link_to "+ create instructor", "#modal-create-instructor", class: 'btn btn-sm btn-primary', :data => {:toggle=>"modal"}
+    = render 'users/table', users: @instructors
+  - elsif @user.is_instructor?
+    %h2 Students
+    -#%p
+      Register students by giving them the <b>registration code</b> on the left
+      and directing them to #{link_to new_user_session_path}.
+    = render 'users/table', users: @user.students

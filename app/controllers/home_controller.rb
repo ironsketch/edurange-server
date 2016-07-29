@@ -9,6 +9,8 @@ class HomeController < ApplicationController
       elsif user.is_student?
         redirect_to '/student'
       end
+    else
+      redirect_to new_user_session_path
     end
   end
 end

@@ -2,8 +2,8 @@
   .form-group
     %label{ for: "batch-actions" } with selected:
     .btn-group.btn-group-sm#batch-actions
-      = submit_tag "delete", class: "btn btn-danger", data: { confirm: "Are you sure you want to delete ALL selected users?" }
-      = link_to 'set organization', '#modal-set-organization', class: 'btn btn-warning', data: { toggle: 'modal' }
+      = submit_tag "delete", class: "btn btn-default", data: { confirm: "Are you sure you want to delete ALL selected users?" }
+      = link_to 'set organization', '#modal-set-organization', class: 'btn btn-default', data: { toggle: 'modal' }
 
   .modal#modal-set-organization{ :tabindex => "-1", :role => "dialog", "aria-hidden" => "true" }
     .modal-dialog
