@@ -4,9 +4,9 @@
     %label{ for: "batch-actions" } with selected:
     .btn-group.btn-group-sm#batch-actions
       = submit_tag "delete", class: "btn btn-default", data: { confirm: "Are you sure you want to delete ALL selected users?" }
-      = link_to 'set organization', '#modal-set-organization', class: 'btn btn-default', data: { toggle: 'modal' }
+      = link_to 'set organization', "#modal-set-organization-#{@students_tables}", class: 'btn btn-default', data: { toggle: 'modal' }
 
-  .modal#modal-set-organization{ :tabindex => "-1", :role => "dialog", "aria-hidden" => "true" }
+  .modal{ id: "modal-set-organization-#{@students_tables}", :tabindex => "-1", :role => "dialog", "aria-hidden" => "true" }
     .modal-dialog
       .modal-content
         .modal-body
@@ -15,6 +15,7 @@
               &times;
           .form-group
             = label_tag "Organization"
+            %p Set the selected users' organization.
             = text_field_tag "organization", nil, class: 'form-control'
           = submit_tag "update", :class => 'btn btn-primary'
 
@@ -31,3 +32,4 @@
       - users.each do |user|
         %tr
           = render user
+- @students_tables += 1
