@@ -1,3 +1,4 @@
+- @students_tables ||= 0
 = form_tag batch_action_users_path, method: :post do
   .form-group
     %label{ for: "batch-actions" } with selected:
@@ -17,10 +18,10 @@
             = text_field_tag "organization", nil, class: 'form-control'
           = submit_tag "update", :class => 'btn btn-primary'
 
-  %table.table.table-striped.dataTable
+  %table.table.table-striped.students-table
     %thead
       %tr
-        %th.text-center= check_box_tag "select_all", 1
+        %th.text-center= check_box_tag "select_all", 1, false, class: "select-all"
         %th Name
         %th Email
         %th Organization
