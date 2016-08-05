@@ -11,7 +11,7 @@
     = link_to "view", user_path(user), class: 'btn btn-xs btn-default'
     -#- if policy(user).edit?
       = link_to "set role", "#modal-set-role-#{user.id}", class: 'btn btn-xs btn-warning', data: { toggle: 'modal' }
-    - if policy(user).destroy?
+    -#- if policy(user).destroy?
       = link_to "delete", user_path(user), data: { :confirm => "Are you sure?" }, method: :delete, class: 'btn btn-xs btn-danger'
 -#.modal.modal-set-organization{ :tabindex => "-1", :role => "dialog", "aria-hidden" => "true", id: "modal-set-role-#{user.id}" }
   .modal-dialog

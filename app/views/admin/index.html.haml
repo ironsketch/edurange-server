@@ -1,6 +1,5 @@
 = render 'admin/modals/create_instructor' if @user.is_admin?
-= render 'admin/modals/student_group_create'
-= render 'admin/modals/student_group_user_add'
+= render 'student_groups/modals/create'
 
 = content_for :heading do
   Dashboard
@@ -10,17 +9,34 @@
   = render 'dashboard/aws_settings' if @user.is_admin?
 
 .col-md-8
-  - if @user.is_admin? || @user.is_instructor?
-    %h3 Your Scenarios
-    = render 'dashboard/scenarios', scenarios: @user.scenarios
-
-  - if @user.is_instructor? || @user.is_admin?
-    %h3 Your Students
-    %p Register students by giving them the <b>registration code</b> on the left.
-    = render 'users/table', users: @user.students
-
   - if @user.is_admin?
-    %h3 Instructors
+    %h2 Instructors
     %span.pull-right= link_to "+ create instructor", "#modal-create-instructor", class: 'btn btn-sm btn-primary', :data => {:toggle=>"modal"}
     = render 'users/table', users: @instructors
 
+  - if @user.is_admin? || @user.is_instructor?
+    %h2 Your Scenarios
+    = render 'dashboard/scenarios', scenarios: @user.scenarios
+
+    %h2 Your Students
+    %p Register students by giving them the <b>registration code</b> on the left.
+    = render 'users/table', users: @user.students
+
+    %h2
+      Student Groups
+      = link_to "+ create",
+                "#modal-create-student-group",
+                class: 'btn btn-xs btn-primary',
+                data: { toggle: "modal" }
+    - unless @user.student_groups.count > 1
+      %p Student groups are a handy to way to organize students! Click 'create' above to get started.
+    - @user.student_groups.each do |student_group|
+      - next if student_group.name == "All" # because it's redundant
+      %h3
+        = student_group.name
+        - unless student_group.name == "All"
+          = link_to "destroy",
+                    student_group_path(student_group),
+                    method: 'delete',
+                    class: 'btn btn-xs btn-danger'
+      = render 'users/table', users: student_group.users

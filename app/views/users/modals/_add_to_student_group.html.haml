@@ -1,0 +1,13 @@
+.modal{ id: (id || 'modal-add-to-student-group'), tabindex: "-1", role: "dialog", "aria-hidden" => "true"}
+  .modal-dialog
+    .modal-content
+      .modal-body
+        .text-right
+          %button.close{ :type => "button", "data-dismiss" => "modal", "aria-hidden" => "true"}
+            &times;
+        .form-group
+          = label_tag "Student Group"
+          %p Add selected users to a student group.
+          = select_tag "student_group",
+                        options_from_collection_for_select(@user.student_groups.where.not(name: "All"), :id, :name)
+        = submit_tag "add users", :class => 'btn btn-primary'

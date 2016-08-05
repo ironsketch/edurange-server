@@ -3,21 +3,22 @@
   .form-group
     %label{ for: "batch-actions" } with selected:
     .btn-group.btn-group-sm#batch-actions
-      = submit_tag "delete", class: "btn btn-default", data: { confirm: "Are you sure you want to delete ALL selected users?" }
-      = link_to 'set organization', "#modal-set-organization-#{@students_tables}", class: 'btn btn-default', data: { toggle: 'modal' }
+      = submit_tag "delete",
+                    class: "btn btn-default",
+                    data: { confirm: "Are you sure you want to delete ALL selected users?" }
+      = link_to 'set organization',
+                "#modal-set-organization-#{@students_tables}",
+                class: 'btn btn-default',
+                data: { toggle: 'modal' }
+      - unless users.any? { |u| u.role.to_s != "student" } || params[:controller] == 'users'
+        = link_to 'add to student group',
+                  "#modal-add-to-student-group-#{@students_tables}",
+                  class: 'btn btn-default',
+                  data: { toggle: 'modal' }
 
-  .modal{ id: "modal-set-organization-#{@students_tables}", :tabindex => "-1", :role => "dialog", "aria-hidden" => "true" }
-    .modal-dialog
-      .modal-content
-        .modal-body
-          .text-right
-            %button.close{ :type => "button", "data-dismiss" => "modal", "aria-hidden" => "true"}
-              &times;
-          .form-group
-            = label_tag "Organization"
-            %p Set the selected users' organization.
-            = text_field_tag "organization", nil, class: 'form-control'
-          = submit_tag "update", :class => 'btn btn-primary'
+  = render 'users/modals/set_organization', id: "modal-set-organization-#{@students_tables}"
+  - unless params[:controller] == 'users'
+    = render 'users/modals/add_to_student_group', id: "modal-add-to-student-group-#{@students_tables}"
 
   %table.table.table-striped.students-table
     %thead
@@ -27,7 +28,7 @@
         %th Email
         %th Organization
         %th Role
-        %th Actions
+        %th
     %tbody
       - users.each do |user|
         %tr
