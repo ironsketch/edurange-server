@@ -15,6 +15,7 @@ Edurange::Application.routes.draw do
   get 'management/status'
   get 'management/purge'
 
+  resources :student_groups
   resources :instance_groups
   resources :players
   resources :groups

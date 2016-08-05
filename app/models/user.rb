@@ -135,4 +135,7 @@ class User < ActiveRecord::Base
     return sg, sgu
   end
 
+  def students
+    student_groups.find_by(name: "All").try(:users) || []
+  end
 end

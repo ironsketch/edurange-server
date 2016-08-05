@@ -61,6 +61,8 @@ class UsersController < ApplicationController
       destroy_selected
     elsif params[:commit] == "update"
       update_selected
+    elsif params[:commit] == "add users"
+      add_selected_to_student_group
     else
       redirect_to :back || users_path
     end
@@ -98,10 +100,32 @@ class UsersController < ApplicationController
     end
   end
 
+  def add_selected_to_student_group
+    student_group = StudentGroup.find(params[:student_group])
+    names = []
+
+    unless student_group.nil?
+      student_group.user_add(*User.find(params[:ids]))
+    else
+      flash[:error] = "Couldn't find student group"
+    end
+
+    if student_group.errors.any?
+      flash[:error] = student_group.errors.full_messages.to_sentence
+    else
+      flash[:notice] = "#{names.to_sentence} added to #{student_group.name}"
+    end
+
+    respond_to do |format|
+      format.html { redirect_to (:back || users_path) }
+      format.json { head :success }
+    end
+  end
+
   private
 
   def secure_params
-    params.permit(:role, :organization)
+    params.permit(:role, :organization, :student_group)
   end
 
 end

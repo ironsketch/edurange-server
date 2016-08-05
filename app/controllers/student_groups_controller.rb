@@ -1,5 +1,5 @@
 class StudentGroupsController < ApplicationController
-  before_action :authenticate_instructor
+  #before_action :authenticate_instructor
 
   # All this functionality should be moved to the instructor controller
 
@@ -20,31 +20,29 @@ class StudentGroupsController < ApplicationController
   #   end
   # end
 
-  # def new
-  #   group = StudentGroup.where(
-  #                             :instructor_id => current_user.id, 
-  #                             :name => params[:name]
-  #                             )
-  #   if group.blank?
-  #     StudentGroup.create(
-  #                         :instructor_id => current_user.id, 
-  #                         :name => params[:name], 
-  #                         :student_id => current_user.id
-  #                         )
-  #   else
-  #     flash[:new_group_err] = "Student Group already exists"
-  #   end
-  #   # redirect_to instructor_groups_path :message => message
-  #   redirect_to '/student_groups'
-  # end
+   def create
+     @student_group = current_user.student_groups.create(student_group_params)
 
-  # def destroy
-  #   StudentGroup.where(
-  #                     :instructor_id => current_user.id, 
-  #                     :name => params[:group_name]
-  #                     ).destroy_all
-  #   redirect_to '/student_groups'
-  # end
+     if @student_group.errors.any?
+       flash[:error] = @student_group.errors.full_messages.to_sentence
+     else
+       flash[:notice] = "#{@student_group.name} created!"
+     end
+
+     redirect_to (:back || root_url)
+   end
+
+   def destroy
+     student_group = current_user.student_groups.find(params[:id])
+
+     if not student_group.destroy
+       flash[:errors] = student_group.errors.full_messages.to_sentence
+     else
+       flash[:notice] = "#{student_group.name} destroyed"
+     end
+
+     redirect_to (:back || root_url)
+   end
 
   # def add_to
   #   user = User.find_by_email params[:email]
@@ -80,5 +78,11 @@ class StudentGroupsController < ApplicationController
   #   end
   #   redirect_to '/student_groups'
   # end
+
+  private
+
+  def student_group_params
+    params.require(:student_group).permit(:name)
+  end
 
 end

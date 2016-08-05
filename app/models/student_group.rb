@@ -1,9 +1,11 @@
+require 'pry'
+
 class StudentGroup < ActiveRecord::Base
   belongs_to :user
   has_many   :student_group_users, dependent: :destroy
   has_many :users, through: :student_group_users
 
-  validates :name, presence: true, uniqueness: { scope: :user, message: "Name taken" } 
+  validates :name, presence: true, uniqueness: { scope: :user, message: "already taken" } 
 
   # before_destroy :check_if_all
 
@@ -15,20 +17,15 @@ class StudentGroup < ActiveRecord::Base
   # 	true
   # end
 
-  def user_add(users)
-    users = [*users]
-    student_group_all = self.user.student_groups.find_by_name("All")
-    student_group_users = []
-
-    users.each do |user|
-      if student_group_all.users.include?(user)
-        student_group_users.push(self.student_group_users.create(user: user))
+  def user_add(*students)
+    binding.pry
+    students.each do |student|
+      if user.students.include?(student)
+        student_group_users.push(student_group_users.create(user: student))
       else
-        errors.add(:user, "#{user.name} not found")
+        errors.add(:user, "#{student.name} not found")
       end
     end
-
-    return student_group_users
   end
 
 end
