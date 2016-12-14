@@ -19,6 +19,14 @@ class Instance < ActiveRecord::Base
 
   after_destroy :update_scenario_modified
   before_destroy :validate_stopped
+  after_save :update_statistic
+
+  def update_statistic
+    statistic = self.scenario.statistic
+    if statistic
+      statistic.gen_info
+    end
+  end
 
   def validate_stopped
     if not self.stopped?
