@@ -13,11 +13,12 @@
 //= require jquery
 //= require jquery.turbolinks
 //= require jquery_ujs
+//= require moment
+//= require fullcalendar
 //= require bootstrap
 //= require underscore
-//= require bootstrap
 //= require_tree .
-// require turbolinks
+//= require turbolinks
 
 function update_flash(message) {
     if (!$('#flash_notice').length) {

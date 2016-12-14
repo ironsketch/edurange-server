@@ -1,0 +1,23 @@
+= simple_form_for @schedule, remote: true do |f|
+  = f.error_notification
+
+  .field
+    = f.label :scenario
+    = f.select(:scenario, @scenario_list.each {|x| x})
+  .form-inputs#schedule_time
+    = f.input :start_time, input_html: { style: 'width: 200px' }, as: :date_time_picker
+    = f.input :end_time, input_html: { style: 'width: 200px' }, as: :date_time_picker
+    %span.help-block.inline#end_time-help
+    </br>
+  %div#scenario-div  
+    %span.help-block.inline#scenario-help
+
+
+  .form-actions
+    = f.button :submit
+    = link_to 'Delete',                      |
+      schedule,                              |
+      method: :delete,                       |
+      class: 'btn btn-danger',               |
+      data: { confirm: 'Are you sure?' },    |
+      remote: true unless @schedule.new_record? |

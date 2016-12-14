@@ -1,0 +1,10 @@
+%div.modal#modal-schedule-new{ :tabindex => "-1", :role => "dialog", "aria-labelledby" => "myModalLabel", "aria-hidden" => "true"}
+  %div.modal-dialog
+    %div.modal-content
+      %div.modal-header
+        %button.close{ :type => "button", "data-dismiss" => "modal", "aria-hidden" => "true"}
+          &times;
+        %h3.modal-title.inline#title
+          Schedule New Scenario
+      %div.modal-body#modalbody
+        = render 'form', scenario: @scenario

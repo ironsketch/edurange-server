@@ -1,0 +1,19 @@
+<% if @schedule.errors.any? %>
+  <% if @schedule.errors[:end_time].any? %>
+    $('#modal-schedule-new').find('#schedule_time').addClass('has-error');
+    $('#modal-schedule-new').find('#end_time-help').text('<%= @schedule.errors[:end_time][0] %>');
+  <% else %>
+    $('#modal-schedule-new').find('#schedule_time').removeClass('has-error');
+    $('#modal-schedule-new').find('#end_time-help').text('');
+  <% end %>
+  <% if @schedule.errors[:scenario].any? %>
+    $('#modal-schedule-new').find('#scenario-div').addClass('has-error');
+    $('#modal-schedule-new').find('#scenario-help').text('<%= @schedule.errors[:scenario][0] %>');
+  <% else %>
+    $('#modal-schedule-new').find('#scenario-div').removeClass('has-error');
+    $('#modal-schedule-new').find('#scenario-help').text('');
+  <% end %>
+<% else %>
+  $('#modal-schedule-new').modal('toggle');
+  update_flash("Scheduled Scenario - '<%= @schedule.name %>'.");
+<% end %>

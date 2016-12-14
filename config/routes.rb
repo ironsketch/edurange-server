@@ -1,5 +1,6 @@
 Edurange::Application.routes.draw do
 
+  resources :schedules
   #Static tutorial routes
   get 'tutorials/index'
   get 'tutorials/making_scenarios'

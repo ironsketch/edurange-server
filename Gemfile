@@ -35,6 +35,8 @@ gem 'groupdate'
 gem 'active_median'
 gem 'rubyzip'
 gem 'dotenv-rails', :groups => [:development, :test]
+gem 'fullcalendar-rails'
+gem 'momentjs-rails'
 
 group :development do
   gem 'better_errors'

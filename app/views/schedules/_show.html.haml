@@ -1,0 +1,29 @@
+%div.modal#show_schedule{ :tabindex => "-1", :role => "dialog", "aria-labelledby" => "myModalLabel", "aria-hidden" => "true"}
+  %div.modal-dialog
+    %div.modal-content
+      %div.modal-header
+        %button.close{ :type => "button", "data-dismiss" => "modal", "aria-hidden" => "true"}
+          &times;
+        %h3.modal-title.inline#title
+          Show Scheduled Scenario
+      %div.modal-body#modalbody
+        %table    
+          %tr
+            %td= "Scenario"
+            %td= @schedule.scenario
+          %tr
+            %td= "Start Time"
+            %td= @schedule.start_time
+          %tr
+            %td= "End Time"
+            %td= @schedule.end_time
+          %tr
+            %td= "User"
+            %td= @schedule.user_id
+      - if current_user.id == @schedule.user.id
+        %div.modal-footer      
+          %div.button-delete
+            = link_to 'Delete', @schedule,           |
+              method: :delete,                       |
+              class: 'btn btn-danger',               |
+              :data => { :confirm => 'Are you sure?' } |

@@ -5,6 +5,7 @@ class User < ActiveRecord::Base
   enum role: [:user, :vip, :admin, :instructor, :student]
 
   has_many :scenarios
+  has_many :schedules
   has_many :student_groups, dependent: :destroy
   has_many :student_group_users, dependent: :destroy
 

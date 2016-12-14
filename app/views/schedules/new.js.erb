@@ -1,0 +1,12 @@
+$('#remote_container').html('<%= j render "new" %>');
+$('#modal-schedule-new').modal('show');
+$(document).ready(function() {
+  return $('.form_datetime').datetimepicker({
+    autoclose: true,
+    todayBtn: false,
+    pickerPosition: "bottom-left",
+    format: 'yyyy-mm-dd hh:00',
+    minView: 1,
+    todayHighlight: true
+  });
+});
