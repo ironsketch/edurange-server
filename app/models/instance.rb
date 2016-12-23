@@ -368,12 +368,12 @@ class Instance < ActiveRecord::Base
     users = groups.inject([]) {|users, group| users.concat(group.players) }
   end
 
-  def add_administrator(group)
-    InstanceGroup.create(group: group, instance: self, administrator: true)
+  def add_administrator(group, ip_visible)
+    InstanceGroup.create(group: group, instance: self, administrator: true, ip_visible: ip_visible)
   end
 
-  def add_user(group)
-    InstanceGroup.create(group: group, instance: self, administrator: false)
+  def add_user(group, ip_visible)
+    InstanceGroup.create(group: group, instance: self, administrator: false, ip_visible: ip_visible)
   end
 
 end

@@ -5,20 +5,24 @@ Instructions: ''
 InstructionsStudent: ''
 Groups:
 - Name: Instructor
-  Instructions: 
+  Instructions:
   Access:
     Administrator:
-    - Rekall
-    - Subway
-    - Earth_Aerospace_Port
-    - Mars_Aerospace_Port
-    - Home
-    - Venusville
-    - Last_Resort
-    - Resistance_Base
-    - Control_Room
+      IP_Visible:
+      - Rekall
+      - Subway
+      - Earth_Aerospace_Port
+      - Mars_Aerospace_Port
+      - Home
+      - Venusville
+      - Last_Resort
+      - Resistance_Base
+      - Control_Room
+      IP_Hidden:
     User:
-    - Nat
+      IP_Visible:
+      - Nat
+      IP_Hidden:
   Users:
   - Login: instructor
     Password: vLCu3Crf
@@ -28,17 +32,19 @@ Groups:
 - Name: Student
   Instructions: ''
   Access:
-    Administrator: []
+    Administrator:
     User:
-    - Rekall
-    - Subway
-    - Earth_Aerospace_Port
-    - Mars_Aerospace_Port
-    - Home
-    - Venusville
-    - Last_Resort
-    - Resistance_Base
-    - Control_Room
+      IP_Visible:
+      - Home
+      IP_Hidden:
+      - Rekall
+      - Subway
+      - Earth_Aerospace_Port
+      - Mars_Aerospace_Port
+      - Venusville
+      - Last_Resort
+      - Resistance_Base
+      - Control_Room
   Users:
   - Login: test1
     Password: password
@@ -59,6 +65,18 @@ Clouds:
       IP_Address_Dynamic: 
       Internet_Accessible: true
       Roles: []
+  - Name: Home_Subnet
+    CIDR_Block: 10.0.24.0/24
+    Internet_Accessible: true
+    Instances:
+    - Name: Home
+      OS: ubuntu
+      IP_Address: 10.0.24.5
+      IP_Address_Dynamic: 
+      Internet_Accessible: true
+      Roles:
+      - Home
+      - net_tools
   - Name: Earth_Subnet
     CIDR_Block: 10.0.0.0/24
     Internet_Accessible: false
@@ -170,18 +188,6 @@ Clouds:
       Roles:
       - fin_only
       - dns_server
-  - Name: Home_Subnet
-    CIDR_Block: 10.0.24.0/24
-    Internet_Accessible: true
-    Instances:
-    - Name: Home
-      OS: ubuntu
-      IP_Address: 10.0.24.5
-      IP_Address_Dynamic: 
-      Internet_Accessible: true
-      Roles:
-      - Home
-      - net_tools
 Subnets: 
 Instances: 
 Roles:

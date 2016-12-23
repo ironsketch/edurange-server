@@ -127,6 +127,7 @@ class Scenario < ActiveRecord::Base
       self.name = file["Name"]
       self.description = file["Description"]
       self.instructions = file["Instructions"] if file["Instructions"]
+      self.instructions_student = file["InstructionsStudent"] if file["InstructionsStudent"]
       self.uuid = `uuidgen`.chomp
       self.answers = ''
       self.save
@@ -272,35 +273,72 @@ class Scenario < ActiveRecord::Base
 
           # Give group admin on machines they own
           if admin
-            admin.each do |admin_instance|
-              if instance = name_lookup_hash[admin_instance]
-                instance.add_administrator(group)
-                if not instance.save
+            if admin["IP_Visible"]
+              admin["IP_Visible"].each do |admin_instance|
+                if instance = name_lookup_hash[admin_instance]
+                  instance.add_administrator(group, true)
+                  if not instance.save
+                    self.destroy_dependents
+                    errors.add(:load, "error adding group access admin to instance #{instance.name}, #{instance.errors.messages}")
+                    return false
+                  end
+                else
                   self.destroy_dependents
-                  errors.add(:load, "error adding group access admin to instance #{instance.name}, #{instance.errors.messages}")
+                  errors.add(:load, "error adding admin access. Instance #{admin_instance} not found.")
                   return false
                 end
-              else
-                self.destroy_dependents
-                errors.add(:load, "error adding admin access. Instance #{admin_instance} not found.")
-                return false
+              end
+            end
+            if admin["IP_Hidden"]
+              admin["IP_Hidden"].each do |admin_instance|
+                if instance = name_lookup_hash[admin_instance]
+                  instance.add_administrator(group, false)
+                  if not instance.save
+                    self.destroy_dependents
+                    errors.add(:load, "error adding group access admin to instance #{instance.name}, #{instance.errors.messages}")
+                    return false
+                  end
+                else
+                  self.destroy_dependents
+                  errors.add(:load, "error adding admin access. Instance #{admin_instance} not found.")
+                  return false
+                end
               end
             end
           end
 
-          if access["User"]
-            access["User"].each do |user_instance|
-              if instance = name_lookup_hash[user_instance]
-                instance.add_user(group)
-                if not instance.save
+          user = access["User"]
+          if user
+            if user["IP_Visible"]
+              user["IP_Visible"].each do |user_instance|
+                if instance = name_lookup_hash[user_instance]
+                  instance.add_user(group, true)
+                  if not instance.save
+                    self.destroy_dependents
+                    errors.add(:load, "error adding group access user to instance #{instance.name}")
+                    return false
+                  end
+                else
                   self.destroy_dependents
-                  errors.add(:load, "error adding group access user to instance #{instance.name}")
+                  errors.add(:load, "error adding user access. Instance #{user_instance} not found.")
                   return false
                 end
-              else
-                self.destroy_dependents
-                errors.add(:load, "error adding user access. Instance #{user_instance} not found.")
-                return false
+              end
+            end
+            if user["IP_Hidden"]
+              user["IP_Hidden"].each do |user_instance|
+                if instance = name_lookup_hash[user_instance]
+                  instance.add_user(group, false)
+                  if not instance.save
+                    self.destroy_dependents
+                    errors.add(:load, "error adding group access user to instance #{instance.name}")
+                    return false
+                  end
+                else
+                  self.destroy_dependents
+                  errors.add(:load, "error adding user access. Instance #{user_instance} not found.")
+                  return false
+                end
               end
             end
           end
@@ -377,8 +415,14 @@ class Scenario < ActiveRecord::Base
       { "Name" => group.name,
         "Instructions" => group.instructions,
         "Access" => { 
-          "Administrator" => group.instance_groups.select{ |ig| ig.administrator  }.map{ |ig| ig.instance.name },
-          "User" => group.instance_groups.select{ |ig| not ig.administrator  }.map{ |ig| ig.instance.name }
+          "Administrator" => group.instance_groups.none? {|ig| ig.administrator} ? nil : {
+            "IP_Visible" => group.instance_groups.select{ |ig| ig.administrator and ig.ip_visible }.map{ |ig| ig.instance.name },
+            "IP_Hidden" => group.instance_groups.select{ |ig| ig.administrator and not ig.ip_visible }.map{ |ig| ig.instance.name }
+            },
+          "User" => group.instance_groups.none? {|ig| not ig.administrator} ? nil : {
+            "IP_Visible" => group.instance_groups.select{ |ig| not ig.administrator and ig.ip_visible }.map{ |ig| ig.instance.name },
+            "IP_Hidden" => group.instance_groups.select{ |ig| not ig.administrator and not ig.ip_visible }.map{ |ig| ig.instance.name }
+          }
         },
         "Users" => group.players.empty? ? nil : group.players.map { |p| { 
           "Login" => p.login, 

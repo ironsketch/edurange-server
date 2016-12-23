@@ -14,7 +14,8 @@ Groups:
   - Name: Instructor
     Access:
       Administrator:
-        - NAT_Instance
+        IP_Visible:
+          - NAT_Instance
     Users:
       - Login: instructor
         Password: Clzv1aeCs1Yz
@@ -22,8 +23,9 @@ Groups:
 
   - Name: Students
     Access:
-      User: 
-        - NAT_Instance
+      User:
+      IP_Visible: 
+          - NAT_Instance
     Users:
       - Login: student
         Password: sWfwkNGblfv

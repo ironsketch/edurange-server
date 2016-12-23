@@ -40,7 +40,8 @@ Groups:
   - Name: Scoring_Team
     Access:
       Administrator:
-        - Scorer_Instance
+        IP_Visible:
+          - Scorer_Instance
     Users:
       - Login: scorer
         Password: ijkl
@@ -48,9 +49,11 @@ Groups:
   - Name: Attacking_Team
     Access:
       Administrator:
-        - Attacker_Instance
+        IP_Visible:
+          - Attacker_Instance
       User:
-        - NAT_Instance
+        IP_Visible:
+          - NAT_Instance
     Users:
       - Login: attacking_team
         Password: abcd
@@ -58,9 +61,11 @@ Groups:
   - Name: Defending_Team
     Access:
       Administrator:
-        - Defender_Instance
+        IP_Visible:
+          - Defender_Instance
       User:
-        - NAT_Instance
+        IP_Visible:
+          - NAT_Instance
     Users:
       - Login: defending_team
         Password: efgh

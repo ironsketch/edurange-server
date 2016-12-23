@@ -8,9 +8,11 @@ Groups:
 #   Instructions: ''
 #   Access:
 #     Administrator:
-#     - Instance2
+#       IP_Visible:      
+#       - Instance2
 #     User:
-#     - Instance1
+#       IP_Visible:
+#       - Instance1
 #   Users:
 #   - Login: instructor
 #     Password: jiJlskOlls89

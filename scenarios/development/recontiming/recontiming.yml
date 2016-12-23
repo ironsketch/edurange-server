@@ -8,11 +8,13 @@ Groups:
   Instructions: 
   Access:
     Administrator:
-    - Team_1_Instance
-    - Battlespace_1_Instance
-    - Battlespace_10_Instance
+      IP_Visible:
+      - Team_1_Instance
+      - Battlespace_1_Instance
+      - Battlespace_10_Instance
     User:
-    - NAT_Instance
+      IP_Visible:
+      - NAT_Instance
   Users:
   - Login: instructor
     Password: vLCu3Crf
@@ -23,9 +25,11 @@ Groups:
   Instructions: 
   Access:
     Administrator:
-    - Team_1_Instance
+      IP_Visible:
+      - Team_1_Instance
     User:
-    - NAT_Instance
+      IP_Visible:
+      - NAT_Instance
   Users: 
 Clouds:
 - Name: Cloud_1

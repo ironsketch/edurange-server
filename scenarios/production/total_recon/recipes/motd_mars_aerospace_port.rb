@@ -8,8 +8,5 @@ script "motd_mars_aerospace_port" do
   for each_home in $(ls /home/)
     do cat /etc/motd > /home/$each_home/instructions.txt
   done
-  touch /etc/mars_only
-  wget https://github.com/edurange/scenario-total-recon/raw/master/mars_only -O /etc/mars_only
-  echo "for i in {1..5}; do cat ~/instructions.txt; done" >> /etc/bash.bashrc
   EOH
 end

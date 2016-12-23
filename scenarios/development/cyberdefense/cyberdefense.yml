@@ -30,9 +30,11 @@ Groups:
   - Name: Scoring_Team
     Access:
       Administrator:
-        - Scorer_Instance
+        IP_Visible:
+          - Scorer_Instance
       User:
-      - NAT_Instance
+        IP_Visible:
+          - NAT_Instance
     Users:
       - Login: scorer
         Password: ijkl
@@ -40,9 +42,11 @@ Groups:
   - Name: Red_Team 
     Access:
       Administrator:
-        - Red_Instance
+        IP_Visible:
+          - Red_Instance
       User:
-        - NAT_Instance
+        IP_Visible:
+          - NAT_Instance
     Users:
       - Login: red_team1
         Password: abcd
@@ -54,9 +58,11 @@ Groups:
   - Name: Blue_Team
     Access:
       Administrator:
-        - Blue_Instance
+        IP_Visible:
+          - Blue_Instance
       User:
-        - NAT_Instance
+        IP_Visible:
+          - NAT_Instance
     Users:
       - Login: blue_team1
         Password: efgh

@@ -16,6 +16,7 @@ Groups:
   - Name: Instructor
     Access:
       Administrator:
+        IP_Visible:
         - NAT_Instance
     Users:
       - Login: instructor
@@ -24,7 +25,8 @@ Groups:
 
   - Name: Students
     Access:
-      User: 
+      User:
+        IP_Visible:
         - NAT_Instance
     Users:
       - Login: student

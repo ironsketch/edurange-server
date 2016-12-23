@@ -73,17 +73,17 @@
 
           %label Instances:
           %ul
-            - group.instances.each do |instance|
+            - group.instance_groups.each do |instance_group|
               %li
                 %label Name:
-                = instance.name
-                - if instance.internet_accessible
+                = instance_group.instance.name
+                - if instance_group.instance.internet_accessible
                   %br
                   %label Public IP Address:
-                  = instance.ip_address_public ? instance.ip_address_public : "not set"
+                  = instance_group.instance.ip_address_public ? instance_group.instance.ip_address_public : "not set"
                 %br
                 %label IP Address:
-                = instance.ip_address
+                = instance_group.ip_visible ? instance_group.instance.ip_address : "hidden"
               %br
 
     %label Questions:

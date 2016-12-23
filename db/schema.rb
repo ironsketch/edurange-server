@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161107185921) do
+ActiveRecord::Schema.define(version: 20161220060742) do
 
   create_table "answers", force: :cascade do |t|
     t.boolean  "correct"
@@ -72,6 +72,7 @@ ActiveRecord::Schema.define(version: 20161107185921) do
     t.boolean  "administrator"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "ip_visible",    default: true
   end
 
   add_index "instance_groups", ["group_id"], name: "index_instance_groups_on_group_id"

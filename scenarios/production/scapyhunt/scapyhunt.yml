@@ -18,6 +18,7 @@ Groups:
   - Name: Instructor
     Access:
       Administrator:
+        IP_Visible:
         - Team1_Instance
         - Team2_Instance
         - Team3_Instance
@@ -30,6 +31,7 @@ Groups:
     Access:
       User:
       Administrator:
+        IP_Visible:
         - Team1_Instance
     Users:
       - Login: team1
@@ -40,6 +42,7 @@ Groups:
     Access:
       User:
       Administrator:
+        IP_Visible:
         - Team2_Instance
     Users:
       - Login: team2
@@ -50,6 +53,7 @@ Groups:
     Access:
       User:
       Administrator:
+        IP_Visible:
         - Team3_Instance
     Users:
       - Login: team3

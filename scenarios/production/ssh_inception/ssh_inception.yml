@@ -3,22 +3,24 @@ Name: SSH_Inception
 Description: Ssh Inception teaches students the basics of ssh, a secure a program for logging into a remote machine. 
 Instructions: Instruct students to connect to the first machine, and further login instructions will appear onscreen once connected.
                 They can also be found in /etc/motd
-InstructionsStudent: ''
+InstructionsStudent: Login to the NAT_Instance. Further instructions will be found there.
 Groups:
 - Name: Instructor
   Instructions: 
   Access:
     Administrator:
-    - anon_ftp
-    - starting_line
-    - first_stop
-    - second_stop
-    - third_stop
-    - fourth_stop
-    - satan_palace
-    - fifth_stop
+      IP_Visible:
+      - anon_ftp
+      - starting_line
+      - first_stop
+      - second_stop
+      - third_stop
+      - fourth_stop
+      - satan_palace
+      - fifth_stop
     User:
-    - NAT_Instance
+      IP_Visible:
+      - NAT_Instance
   Users:
   - Login: instructor
     Password: vLCu3Crf
@@ -28,9 +30,10 @@ Groups:
 - Name: Students
   Instructions: 
   Access:
-    Administrator: []
+    Administrator:
     User:
-    - NAT_Instance
+      IP_Visible:
+      - NAT_Instance
   Users:
   - Login: student
     Password: f26679f
@@ -40,9 +43,10 @@ Groups:
 - Name: Starting_Line
   Instructions: ''
   Access:
-    Administrator: []
+    Administrator:
     User:
-    - starting_line
+      IP_Visible:
+      - starting_line
   Users:
   - Login: inceptor
     Password: readyplayerone
@@ -52,9 +56,10 @@ Groups:
 - Name: First_Stop
   Instructions: ''
   Access:
-    Administrator: []
+    Administrator:
     User:
-    - first_stop
+      IP_Visible:
+      - first_stop
   Users:
   - Login: mal
     Password: inception
@@ -64,9 +69,10 @@ Groups:
 - Name: Second_Stop
   Instructions: ''
   Access:
-    Administrator: []
+    Administrator:
     User:
-    - second_stop
+      IP_Visible:
+      - second_stop
   Users:
   - Login: christopher
     Password: dicaprio
@@ -76,9 +82,10 @@ Groups:
 - Name: Third_Stop
   Instructions: ''
   Access:
-    Administrator: []
+    Administrator:
     User:
-    - third_stop
+      IP_Visible:
+      - third_stop
   Users:
   - Login: cobb
     Password: pizza_wins_now
@@ -88,9 +95,10 @@ Groups:
 - Name: Fourth_Stop
   Instructions: ''
   Access:
-    Administrator: []
+    Administrator:
     User:
-    - fourth_stop
+      IP_Visible:
+      - fourth_stop
   Users:
   - Login: toodeep
     Password: subconcious_security
@@ -100,9 +108,10 @@ Groups:
 - Name: Fifth_Stop
   Instructions: ''
   Access:
-    Administrator: []
+    Administrator:
     User:
-    - fifth_stop
+      IP_Visible:
+      - fifth_stop
   Users:
   - Login: neo
     Password: red_pill
@@ -112,9 +121,10 @@ Groups:
 - Name: Satans_Palace
   Instructions: ''
   Access:
-    Administrator: []
+    Administrator:
     User:
-    - satan_palace
+      IP_Visible:
+      - satan_palace
   Users:
   - Login: satan
     Password: hell_is_the_deepest_level

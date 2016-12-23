@@ -29,11 +29,13 @@ Groups:
   - Name: GroupAdministrators
     Access:
       Administrator:
-        - PlayerInstance
-        - WebServerInstance
-        - AttackerInstance
+        IP_Visible:
+          - PlayerInstance
+          - WebServerInstance
+          - AttackerInstance
       User:
-        - NATInstance
+        IP_Visible:
+          - NATInstance
     Users:
       - Login: instructor
         Password: vLCu3Crf
@@ -41,10 +43,12 @@ Groups:
   - Name: GroupPlayers
     Access:
       Administrator:
-        - PlayerInstance
-        - WebServerInstance
+        IP_Visible:
+          - PlayerInstance
+          - WebServerInstance
       User:
-        - NATInstance
+        IP_Visible:
+          - NATInstance
     Users:
       - Login: player
         Password: vLCu3Crf

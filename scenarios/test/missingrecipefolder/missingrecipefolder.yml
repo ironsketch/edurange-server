@@ -8,9 +8,11 @@ Groups:
   Instructions: ''
   Access:
     Administrator:
-    - Instance_1
+      IP_Visible:
+      - Instance_1
     User:
-    - NAT_Instance
+      IP_Visible:
+      - NAT_Instance
   Users:
   - Login: instructor
     Password: jiJlskOlls89

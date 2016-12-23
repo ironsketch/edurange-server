@@ -36,6 +36,7 @@ Groups:
   - Name: Instructor
     Access:
       Administrator:
+        IP_Visible:
         - Team_1_Instance
         - Battlespace_1_Instance
         - Battlespace_2_Instance
@@ -48,6 +49,7 @@ Groups:
         - Battlespace_9_Instance
         - Battlespace_10_Instance
       User:
+        IP_Visible:
         - NAT_Instance
     Users:
       - Login: instructor
@@ -56,8 +58,10 @@ Groups:
   - Name: Team_1
     Access:
       Administrator:
+        IP_Visible:
         - Team_1_Instance
       User:
+        IP_Visible:
         - NAT_Instance
 
 Clouds:

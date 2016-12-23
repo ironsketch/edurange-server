@@ -8,8 +8,10 @@ Groups:
   - Name: Instructor
     Access:
       User:
+        IP_Visible:
         - NAT_Instance
       Administrator:
+        IP_Visible:
         - Instance_2
     Users:
       - Login: instructor
@@ -18,7 +20,8 @@ Groups:
 
   - Name: Students
     Access:
-      User: 
+      User:
+        IP_Visible:
         - NAT_Instance
         - Instance_2
     Users:

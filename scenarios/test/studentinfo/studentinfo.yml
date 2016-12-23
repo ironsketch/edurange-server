@@ -8,9 +8,11 @@ Groups:
   Instructions: 
   Access:
     Administrator:
-    - Player_Instance
+      IP_Visible:
+      - Player_Instance
     User:
-    - NAT_Instance
+      IP_Visible:
+      - NAT_Instance
   Users:
   - Login: instructor
     Password: Clzv1aeCs1Yz
@@ -20,10 +22,11 @@ Groups:
 - Name: Students
   Instructions: 
   Access:
-    Administrator: []
+    Administrator:
     User:
-    - NAT_Instance
-    - Player_Instance
+      IP_Visible:
+      - NAT_Instance
+      - Player_Instance
   Users:
   - Login: student
     Password: sWfwkNGblfv
