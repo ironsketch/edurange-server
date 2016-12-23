@@ -316,7 +316,7 @@ class Instance < ActiveRecord::Base
       scenario_path = "#{Rails.root}/scenarios/local/#{self.scenario.name.filename_safe}" if not File.exists? scenario_path
 
       # This recipe sets up packages and users and is run for every instance
-      cookbook = Erubis::Eruby.new(File.read("#{Rails.root}/scenarios/recipes/templates/packages_and_users.rb.erb")).result(instance: self) + "\n"
+      cookbook = Erubis::Eruby.new(File.read("#{Rails.root}/scenarios/recipes/default/packages_and_users.rb.erb")).result(instance: self) + "\n"
 
       self.roles.each do |role|
         role.recipes.each do |recipe|
@@ -329,9 +329,9 @@ class Instance < ActiveRecord::Base
       end
 
       # This recipe signals the com page and also gets the bash histories
-      cookbook += Erubis::Eruby.new(File.read("#{Rails.root}/scenarios/recipes/templates/com_page_and_bash_histories.rb.erb")).result(instance: self) + "\n"
+      cookbook += Erubis::Eruby.new(File.read("#{Rails.root}/scenarios/recipes/default/com_page_and_bash_histories.rb.erb")).result(instance: self) + "\n"
       # This recipe changes /etc/bash.bashrc so that the bash history is written to file with every command
-      cookbook += Erubis::Eruby.new(File.read("#{Rails.root}/scenarios/recipes/templates/write_bash_histories.rb.erb")).result(instance: self) + "\n"
+      cookbook += Erubis::Eruby.new(File.read("#{Rails.root}/scenarios/recipes/default/write_bash_histories.rb.erb")).result(instance: self) + "\n"
       
       # do iptables rules
       routing_rules = Erubis::Eruby.new(File.read(Rails.root + "scenarios/bootstrap/ip_tables.sh.erb")).result(instance: self) + "\n"
