@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user_id: 1
+  scenario: MyString
+  scenario_location: MyString
+  start_time: 2016-11-07 10:59:21
+  end_time: 2016-11-07 10:59:21
+
+two:
+  user_id: 1
+  scenario: MyString
+  scenario_location: MyString
+  start_time: 2016-11-07 10:59:21
+  end_time: 2016-11-07 10:59:21
