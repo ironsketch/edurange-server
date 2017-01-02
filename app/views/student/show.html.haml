@@ -80,10 +80,16 @@
                 - if instance_group.instance.internet_accessible
                   %br
                   %label Public IP Address:
-                  = instance_group.instance.ip_address_public ? instance_group.instance.ip_address_public : "not set"
+                  - if instance_group.instance.ip_address_public
+                    = instance_group.instance.ip_address_public
+                  - else
+                    %em.text-muted not set
                 %br
                 %label IP Address:
-                = instance_group.ip_visible ? instance_group.instance.ip_address : "hidden"
+                - if instance_group.ip_visible
+                  = instance_group.instance.ip_address
+                - else
+                  %em.text-muted hidden
               %br
 
     %label Questions:
