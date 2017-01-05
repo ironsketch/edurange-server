@@ -642,7 +642,7 @@ module ProviderAws
   end
 
   def aws_route_table_instance_route_create(opts)
-    opts[:route_table].create_route("0.0.0.0/0", { instance_id: opts[:instance_id]  } )
+    opts[:route_table].create_route("0.0.0.0/0", { instance: opts[:instance_id]  } )
   end
 
   def aws_route_table_internet_gateway_route_create(opts)
