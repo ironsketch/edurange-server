@@ -57,7 +57,7 @@ group :development, :test do
   # gem 'pry-stack_explorer'
   gem 'awesome_print'
   # gem 'factory_girl_rails'
-  # gem 'pry-rails'
+  gem 'pry-rails'
   # gem 'pry-rescue'
   # gem 'rspec-rails', '>= 3.0.0.beta2'
   gem 'daemons'
