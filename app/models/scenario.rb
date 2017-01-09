@@ -16,11 +16,18 @@ class Scenario < ActiveRecord::Base
   has_many :instances, through: :subnets
   has_one :statistic
 
-  validate :validate_name, :validate_paths, :validate_user, :validate_stopped
+  # validations
+  validates_associated :clouds, :questions, :roles, :recipes, :groups
+  validate :validate_paths, :validate_user, :validate_stopped
+  validate :path, :path_yml, :path_recipes
+
+  validates :name, presence: true, format: {
+    with: /\A\w*\z/,
+    message: "can only contain alphanumeric and underscore"
+  }
+  validates :name, format: { without: /\A_*_\z/ }
 
   after_create :get_aws_prefixes, :load, :create_statistic
-  # after_create :load
-  # after_create :create_statistic
 
   before_destroy :validate_stopped, prepend: true
   before_destroy :save_questions_and_answers, prepend: true
@@ -29,26 +36,13 @@ class Scenario < ActiveRecord::Base
 
   def get_aws_prefixes
     content = open('https://ip-ranges.amazonaws.com/ip-ranges.json').read
-    arr = JSON.parse(content)["prefixes"].select { |p| p["region"] == ENV["AWS_REGION"] }.map { |p| p["ip_prefix"] }
+    arr = JSON.parse(content)["prefixes"]
+            .select { |p| p["region"] == ENV["AWS_REGION"] }
+            .map { |p| p["ip_prefix"] }
     self.update_attribute(:aws_prefixes, arr)
   end
 
   # Validations
-
-  def validate_name
-    self.name = self.name.strip
-    if self.name == ""
-      errors.add(:name, "Can not be blank")
-      return false
-    elsif /\W/.match(self.name)
-      errors.add(:name, "Name can only contain alphanumeric and underscore")
-      return false
-    elsif /^_*_$/.match(self.name)
-      errors.add(:name, "Name not allowed")
-      return false
-    end
-    true
-  end
 
   def validate_paths
     if not self.path
