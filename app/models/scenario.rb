@@ -442,26 +442,20 @@ class Scenario < ActiveRecord::Base
 
   def path
     if self.custom?
-      path = "#{Rails.root}/scenarios/custom/#{self.user.id}/#{self.name.downcase}"
+      "#{Rails.root}/scenarios/custom/#{self.user.id}/#{self.name.downcase}"
     else
-      path = "#{Rails.root}/scenarios/#{self.location}/#{self.name.downcase}"
+      "#{Rails.root}/scenarios/#{self.location}/#{self.name.downcase}"
     end
-    return path if File.exists? path
-    false
   end
 
   def path_yml
-    path = "#{self.path}/#{self.name.downcase}.yml"
-    return path if File.exists? path
-    false
+    "#{self.path}/#{self.name.downcase}.yml"
   end
 
   def path_recipes
     path = "#{self.path}/recipes"
-    if not File.exists? path
-      FileUtils.mkdir path
-    end
-    return path
+    FileUtils.mkdir(path) unless File.exists?(path) or not File.exists?(self.path)
+    path
   end
 
   def update_modified
