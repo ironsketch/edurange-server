@@ -5,7 +5,9 @@ class Scenario < ActiveRecord::Base
   # attr_accessor :template # For picking a template when creating a new scenario
 
   serialize :aws_prefixes
-  
+
+  # Associations
+  # http://guides.rubyonrails.org/association_basics.html
   belongs_to :user
   has_many :clouds, dependent: :destroy
   has_many :questions, dependent: :destroy
@@ -16,16 +18,27 @@ class Scenario < ActiveRecord::Base
   has_many :instances, through: :subnets
   has_one :statistic
 
-  # validations
-  validates_associated :clouds, :questions, :roles, :recipes, :groups
-  validate :validate_paths, :validate_user, :validate_stopped
-  validate :path, :path_yml, :path_recipes
+  # Validations
+  # http://guides.rubyonrails.org/active_record_validations.html
+  validates_associated :clouds, :questions, :roles, :recipes, :groups, :user
+  validates :user, presence: true
+  validates :name, presence: true, format: { without: /\A_*_\z/ }
+  validates :name, format: { with: /\A\w*\z/,
+                             message: "can only contain alphanumeric and underscore" }
+  validate :paths_exist, :validate_stopped
 
-  validates :name, presence: true, format: {
-    with: /\A\w*\z/,
-    message: "can only contain alphanumeric and underscore"
-  }
-  validates :name, format: { without: /\A_*_\z/ }
+  # Custom validations methods
+  # http://guides.rubyonrails.org/active_record_validations.html#custom-methods
+
+  def paths_exist
+    errors.add(:path, "#{path} does not exist") unless File.exists? path
+    errors.add(:path, "#{path_yml} does not exist") unless File.exists? path_yml
+    errors.add(:path, "#{path_recipes} does not exist") unless File.exists? path_recipes
+  end
+
+  def validate_stopped
+    errors.add(:running, "can only modify scenario if it is stopped") unless stopped?
+  end
 
   after_create :get_aws_prefixes, :load, :create_statistic
 
@@ -40,46 +53,6 @@ class Scenario < ActiveRecord::Base
             .select { |p| p["region"] == ENV["AWS_REGION"] }
             .map { |p| p["ip_prefix"] }
     self.update_attribute(:aws_prefixes, arr)
-  end
-
-  # Validations
-
-  def validate_paths
-    if not self.path
-      errors.add(:path, 'scenario with that name and location does not exist.')
-      return false
-    end
-    if not self.path_yml
-      errors.add(:path, 'could not find scenario yml file.')
-      return false
-    end
-    if not self.path_recipes
-      errors.add(:path, 'could not find scenario recipes folder.')
-      return false
-    end
-  end
-
-  def validate_stopped
-    if not self.stopped?
-      errors.add(:running, "can only modify scenario if it is stopped")
-      return false
-    end
-    true
-  end
-
-  def validate_user
-    if not self.user
-      errors.add(:user, 'must have a user')
-      return false
-    end
-    if not user = User.find_by_id(self.user)
-      errors.add(:user, 'must have a user')
-      return false
-    end
-    if not (user.is_admin? or user.is_instructor?)
-      errors.add(:user, 'must be admin or instructor.')
-      return
-    end
   end
 
   # Statistics
