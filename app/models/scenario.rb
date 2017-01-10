@@ -2,9 +2,10 @@ class Scenario < ActiveRecord::Base
   include Provider
   require 'open-uri'
 
-  # attr_accessor :template # For picking a template when creating a new scenario
-
   serialize :aws_prefixes
+  # 'serialize' stores a native Ruby object such as a Hash or Array to the database
+  #  as a string
+  enum location: [:development, :production, :local, :custom, :test]
 
   # Associations
   # http://guides.rubyonrails.org/association_basics.html
@@ -40,12 +41,11 @@ class Scenario < ActiveRecord::Base
     errors.add(:running, "can only modify scenario if it is stopped") unless stopped?
   end
 
+
+  # Callbacks
+  # http://guides.rubyonrails.org/active_record_callbacks.html
   after_create :get_aws_prefixes, :load, :create_statistic
-
-  before_destroy :validate_stopped, prepend: true
-  before_destroy :save_questions_and_answers, prepend: true
-
-  enum location: [:development, :production, :local, :custom, :test]
+  before_destroy :validate_stopped, :save_questions_and_answers, prepend: true
 
   def get_aws_prefixes
     content = open('https://ip-ranges.amazonaws.com/ip-ranges.json').read
