@@ -74,266 +74,249 @@ class Scenario < ActiveRecord::Base
     self.questions.each do |question| question.destroy end
   end
 
-  def load
-    name_lookup_hash = Hash.new
-    # Because in the YML we establish relationships by name we need to keep track of
-    # what unique id corresponds to the current loading of the scenario. Whenever we
-    # create an object, we store it within the above hash so that we can look it up
-    # later in this function when we are creating objects referencing things in the database.
-    
-    begin
-      file = YAML.load_file(self.path_yml)
-      #file = YAML.load_file(Rails.root + self.path_yml)
-      clouds = file["Clouds"]
-      subnets = file["Subnets"]
-      instances = file["Instances"]
-      roles = file["Roles"]
-      groups = file["Groups"]
-      scoring = file["Scoring"]
+  def load_metadata(file)
+    self.name = file["Name"]
+    self.description = file["Description"]
+    self.instructions = file["Instructions"] if file["Instructions"]
+    self.instructions_student = file["InstructionsStudent"] if file["InstructionsStudent"]
+    self.uuid = `uuidgen`.chomp
+    self.answers = ''
+    self.save
+  end
 
-      self.name = file["Name"]
-      self.description = file["Description"]
-      self.instructions = file["Instructions"] if file["Instructions"]
-      self.instructions_student = file["InstructionsStudent"] if file["InstructionsStudent"]
-      self.uuid = `uuidgen`.chomp
-      self.answers = ''
-      self.save
+  def create_role(yaml_role)
+    role = self.roles.new(name: yaml_role["Name"])
 
-      ip_lookup_hash = {}
-
-      roles_name_lookup_hash = {}
-      if roles
-        roles.each do |yaml_role|
-          role = self.roles.new(name: yaml_role["Name"])
-
-          if yaml_role["Recipes"]
-            yaml_role["Recipes"].each do |recipe_name|
-
-              recipe = self.recipes.find_by_name(recipe_name)
-              if not recipe
-                recipe = self.recipes.new(name: recipe_name)
-              end
-
-
-              if not recipe.save
-                self.destroy_dependents
-                errors.add(:load, "error creating recipe. #{recipe.errors.messages}")
-                return false
-              end
-
-
-              role_recipe = role.role_recipes.new(recipe_id: recipe.id)
-              if not role_recipe.save
-                self.destroy_dependents
-                errors.add(:load, "error creating role recipe. #{role_recipe.errors.messages}")
-                return false
-              end
-
-            end
-          end
-          if yaml_role["Packages"]
-            yaml_role["Packages"].each { |package| role.packages << package }
-          end
-
-          if not role.save
-            self.destroy_dependents
-            errors.add(:load, "error creating role. #{role.errors.messages}")
-            return false
-          end
-          roles_name_lookup_hash[role.name] = role
-        end
+    yaml_recipes = yaml_role["Recipes"] || []
+    yaml_recipes.each do |recipe_name|
+      recipe = recipes.find_or_create_by(name: recipe_name)
+      if recipe.invalid?
+        self.destroy_dependents
+        errors.add(:load, "error creating recipe. #{recipe.errors.messages}")
+        return false
       end
 
-      if clouds
-        clouds.each do |yaml_cloud|
+      role.recipes << recipe
+    end
 
-          cloud = self.clouds.new(name: yaml_cloud["Name"], cidr_block: yaml_cloud["CIDR_Block"])
-          if not cloud.save
-            self.destroy_dependents
-            errors.add(:load, "error creating cloud. #{cloud.errors.messages}")
+    yaml_packages = yaml_role["Packages"] || []
+    yaml_packages.each { |package| role.packages << package }
+
+    if role.save
+      true
+    else
+      self.destroy_dependents
+      errors.add(:load, "error creating role. #{role.errors.messages}")
+      false
+    end
+  end
+
+  def create_cloud(yaml_cloud)
+    cloud = self.clouds.new(name: yaml_cloud["Name"], cidr_block: yaml_cloud["CIDR_Block"])
+
+    if not cloud.save
+      self.destroy_dependents
+      errors.add(:load, "error creating cloud. #{cloud.errors.messages}")
+      return false
+    end
+
+    (yaml_cloud["Subnets"] || []).each do |yaml_subnet|
+      subnet = cloud.subnets.new(
+        name: yaml_subnet["Name"], 
+        cidr_block: yaml_subnet["CIDR_Block"],
+        internet_accessible: yaml_subnet["Internet_Accessible"] ? true : false
+      )
+      if not subnet.save
+        self.destroy_dependents
+        errors.add(:load, "error creating Subnet #{subnet.name}. #{subnet.errors.messages}")
+        return false
+      end
+
+      (yaml_subnet["Instances"] || []).each do |yaml_instance|
+        instance = subnet.instances.new(
+          name: yaml_instance["Name"],
+          ip_address: yaml_instance["IP_Address"],
+          ip_address_dynamic: yaml_instance["IP_Address_Dynamic"] ? yaml_instance["IP_Address_Dynamic"] : "",
+          internet_accessible: yaml_instance["Internet_Accessible"] ? true : false,
+          os: yaml_instance["OS"],
+          uuid: `uuidgen`.chomp
+        )
+        if not instance.save or not instance.valid?
+          self.destroy_dependents
+          errors.add(:load, "error creating Instance #{instance.name}, #{instance.errors.messages}")
+          return false
+        end
+
+        (yaml_instance["Roles"] ? yaml_instance["Roles"] : []).each do |role_name|
+          if not role = roles.find_by_name(role_name)
+            errors.add(:load, 'role not found #{role_name}')
             return false
           end
+          instance.roles << role
+        end
+      end
+    end
 
-          (yaml_cloud["Subnets"] ? yaml_cloud["Subnets"] : []).each do |yaml_subnet|
+    true
+  end
 
-            subnet = cloud.subnets.new(
-              name: yaml_subnet["Name"], 
-              cidr_block: yaml_subnet["CIDR_Block"],
-              internet_accessible: yaml_subnet["Internet_Accessible"] ? true : false
-            )
-            if not subnet.save
+  def create_group(yaml_group)
+    users = yaml_group["Users"]
+    access = yaml_group["Access"]
+    admin = access["Administrator"]
+    user = access["User"]
+
+    group = self.groups.new(name: yaml_group["Name"], instructions: yaml_group["Instructions"])
+    if not group.save
+      self.destroy_dependents
+      errors.add(:load, "error creating group. #{group.errors.messages}")
+      return false
+    end
+
+    if users
+      users.each do |yaml_user|
+
+        user_id = nil
+        if user = User.find_by_id(yaml_user["Id"])
+          user_id = user.is_student? ? user.id : nil
+        end
+
+        player = group.players.new(
+          login: yaml_user["Login"],
+          password: yaml_user["Password"],
+          user_id: user_id
+        )
+
+        if not player.save
+          self.destroy_dependents
+          errors.add(:load, "error creating player. #{player.errors.messages}")
+          return false
+        end
+
+      end
+    end
+
+    # Give group admin on machines they own
+    if admin
+      if admin["IP_Visible"]
+        admin["IP_Visible"].each do |admin_instance|
+          if instance = instances.find_by(name: admin_instance)
+            instance.add_administrator(group, true)
+            if not instance.save
               self.destroy_dependents
-              errors.add(:load, "error creating Subnet #{subnet.name}. #{subnet.errors.messages}")
+              errors.add(:load, "error adding group access admin to instance #{instance.name}, #{instance.errors.messages}")
               return false
             end
-
-            instance_ips = {}
-            (yaml_subnet["Instances"] ? yaml_subnet["Instances"] : []).each do |yaml_instance|
-
-              instance = subnet.instances.new(
-                name: yaml_instance["Name"],
-                ip_address: yaml_instance["IP_Address"],
-                ip_address_dynamic: yaml_instance["IP_Address_Dynamic"] ? yaml_instance["IP_Address_Dynamic"] : "",
-                internet_accessible: yaml_instance["Internet_Accessible"] ? true : false,
-                os: yaml_instance["OS"],
-                uuid: `uuidgen`.chomp
-              )
-              if not instance.save or not instance.valid?
-                self.destroy_dependents
-                errors.add(:load, "error creating Instance #{instance.name}, #{instance.errors.messages}")
-                return false
-              end
-              ip_lookup_hash[instance.name] = instance.ip_address
-
-              (yaml_instance["Roles"] ? yaml_instance["Roles"] : []).each do |role_name|
-                if not role = roles_name_lookup_hash[role_name]
-                  errors.add(:load, 'role not found #{role_name}')
-                  return false
-                end
-                instance.roles << role
-              end
-
-              name_lookup_hash[instance.name] = instance
-            end
-          end
-
-        end
-      end
-
-      if groups
-        groups.each do |yaml_group|
-
-          users = yaml_group["Users"]
-          access = yaml_group["Access"]
-          admin = access["Administrator"]
-          user = access["User"]
-
-          group = self.groups.new(name: yaml_group["Name"], instructions: yaml_group["Instructions"])
-          if not group.save
+          else
             self.destroy_dependents
-            errors.add(:load, "error creating group. #{group.errors.messages}")
+            errors.add(:load, "error adding admin access. Instance #{admin_instance} not found.")
             return false
           end
-
-          if users
-            users.each do |yaml_user|
-
-              user_id = nil
-              if user = User.find_by_id(yaml_user["Id"])
-                user_id = user.is_student? ? user.id : nil
-              end
-
-              player = group.players.new(
-                login: yaml_user["Login"],
-                password: yaml_user["Password"],
-                user_id: user_id
-              )
-
-              if not player.save
-                self.destroy_dependents
-                errors.add(:load, "error creating player. #{player.errors.messages}")
-                return false
-              end
-
+        end
+      end
+      if admin["IP_Hidden"]
+        admin["IP_Hidden"].each do |admin_instance|
+          if instance = instances.find_by(name: admin_instance)
+            instance.add_administrator(group, false)
+            if not instance.save
+              self.destroy_dependents
+              errors.add(:load, "error adding group access admin to instance #{instance.name}, #{instance.errors.messages}")
+              return false
             end
-          end
-
-          # Give group admin on machines they own
-          if admin
-            if admin["IP_Visible"]
-              admin["IP_Visible"].each do |admin_instance|
-                if instance = name_lookup_hash[admin_instance]
-                  instance.add_administrator(group, true)
-                  if not instance.save
-                    self.destroy_dependents
-                    errors.add(:load, "error adding group access admin to instance #{instance.name}, #{instance.errors.messages}")
-                    return false
-                  end
-                else
-                  self.destroy_dependents
-                  errors.add(:load, "error adding admin access. Instance #{admin_instance} not found.")
-                  return false
-                end
-              end
-            end
-            if admin["IP_Hidden"]
-              admin["IP_Hidden"].each do |admin_instance|
-                if instance = name_lookup_hash[admin_instance]
-                  instance.add_administrator(group, false)
-                  if not instance.save
-                    self.destroy_dependents
-                    errors.add(:load, "error adding group access admin to instance #{instance.name}, #{instance.errors.messages}")
-                    return false
-                  end
-                else
-                  self.destroy_dependents
-                  errors.add(:load, "error adding admin access. Instance #{admin_instance} not found.")
-                  return false
-                end
-              end
-            end
-          end
-
-          user = access["User"]
-          if user
-            if user["IP_Visible"]
-              user["IP_Visible"].each do |user_instance|
-                if instance = name_lookup_hash[user_instance]
-                  instance.add_user(group, true)
-                  if not instance.save
-                    self.destroy_dependents
-                    errors.add(:load, "error adding group access user to instance #{instance.name}")
-                    return false
-                  end
-                else
-                  self.destroy_dependents
-                  errors.add(:load, "error adding user access. Instance #{user_instance} not found.")
-                  return false
-                end
-              end
-            end
-            if user["IP_Hidden"]
-              user["IP_Hidden"].each do |user_instance|
-                if instance = name_lookup_hash[user_instance]
-                  instance.add_user(group, false)
-                  if not instance.save
-                    self.destroy_dependents
-                    errors.add(:load, "error adding group access user to instance #{instance.name}")
-                    return false
-                  end
-                else
-                  self.destroy_dependents
-                  errors.add(:load, "error adding user access. Instance #{user_instance} not found.")
-                  return false
-                end
-              end
-            end
+          else
+            self.destroy_dependents
+            errors.add(:load, "error adding admin access. Instance #{admin_instance} not found.")
+            return false
           end
         end
       end
+    end
 
-      # Do scoring
-      if scoring
+    if user
+      if user["IP_Visible"]
+        user["IP_Visible"].each do |user_instance|
+          if instance = instances.find_by(name: admin_instance)
+            instance.add_user(group, true)
+            if not instance.save
+              self.destroy_dependents
+              errors.add(:load, "error adding group access user to instance #{instance.name}")
+              return false
+            end
+          else
+            self.destroy_dependents
+            errors.add(:load, "error adding user access. Instance #{user_instance} not found.")
+            return false
+          end
+        end
+      end
+      if user["IP_Hidden"]
+        user["IP_Hidden"].each do |user_instance|
+          if instance = instances.find_by(name: user_instance)
+            instance.add_user(group, false)
+            if not instance.save
+              self.destroy_dependents
+              errors.add(:load, "error adding group access user to instance #{instance.name}")
+              return false
+            end
+          else
+            self.destroy_dependents
+            errors.add(:load, "error adding user access. Instance #{user_instance} not found.")
+            return false
+          end
+        end
+      end
+    end
+    true
+  end
+
+  def create_question(yaml_question)
+    question = self.questions.new(
+      type_of: yaml_question['Type'], 
+      text: yaml_question['Text'],
+      points: yaml_question["Points"],
+      order: yaml_question["Order"],
+      options: yaml_question["Options"] ? yaml_question['Options'] : [],
+      values: yaml_question["Values"] ? yaml_question['Values'].map { |val|
+        ({ value: val["Value"], points: val["Points"] })
+      } : []
+    )
+
+    if not question.save
+      self.destroy_dependents
+      errors.add(:load, "error adding question. #{question.errors.messages}")
+      return false
+    end
+    true
+  end
+
+  def load
+    begin
+      file = YAML.load_file(self.path_yml)
+
+      load_metadata(file)
+
+      unless file["Roles"].nil?
+        file["Roles"].each do |role_yaml|
+          return false unless create_role(role_yaml)
+        end
+      end
+
+      unless file["Clouds"].nil?
+        file["Clouds"].each do |cloud_yaml|
+          return false unless create_cloud(cloud_yaml)
+        end
+      end
+
+      unless file["Groups"].nil?
+        file["Groups"].each do |group_yaml|
+          return false unless create_group(group_yaml)
+        end
+      end
+
+      unless file["Scoring"].nil?
         self.reload
-        scoring.each do |yaml_question|
-
-          question = self.questions.new(
-            type_of: yaml_question['Type'], 
-            text: yaml_question['Text'],
-            points: yaml_question["Points"],
-            order: yaml_question["Order"],
-            options: yaml_question["Options"] ? yaml_question['Options'] : [],
-            values: yaml_question["Values"] ? yaml_question['Values'].map { |val|
-              ({ value: val["Value"], points: val["Points"] })
-            } : []
-          )
-
-          if not question.save
-            self.destroy_dependents
-            errors.add(:load, "error adding question. #{question.errors.messages}")
-            return false
-          end
-
+        file["Scoring"].each do |question_yaml|
+          return false unless create_question(question_yaml)
         end
       end
     rescue => e
