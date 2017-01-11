@@ -59,7 +59,7 @@ group :development, :test do
   gem 'pry-rails'
   gem 'pry-byebug'
   # gem 'pry-rescue'
-  # gem 'rspec-rails', '>= 3.0.0.beta2'
+  gem 'rspec-rails'
   gem 'daemons'
   gem 'faker'
   gem 'factory_girl_rails', '~> 4.0'
