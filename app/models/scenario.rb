@@ -75,89 +75,62 @@ class Scenario < ActiveRecord::Base
   end
 
   def load_metadata(file)
-    self.name = file["Name"]
-    self.description = file["Description"]
-    self.instructions = file["Instructions"] if file["Instructions"]
-    self.instructions_student = file["InstructionsStudent"] if file["InstructionsStudent"]
-    self.uuid = `uuidgen`.chomp
-    self.answers = ''
-    self.save
+    self.update(
+      name: file["Name"],
+      description: file["Description"],
+      instructions: file["Instructions"],
+      instructions_student: file["InstructionsStudent"],
+      uuid: `uuidgen`.chomp,
+      answers: ''
+    )
   end
 
-  def create_role(yaml_role)
-    role = self.roles.new(name: yaml_role["Name"])
-
-    yaml_recipes = yaml_role["Recipes"] || []
-    yaml_recipes.each do |recipe_name|
-      recipe = recipes.find_or_create_by(name: recipe_name)
-      if recipe.invalid?
-        self.destroy_dependents
-        errors.add(:load, "error creating recipe. #{recipe.errors.messages}")
-        return false
+  def create_roles(yaml_roles)
+    yaml_roles.each do |role_hash|
+      unless Role.from_h(self, role_hash).save
+        errors[:load] << "unable to create role #{role_hash.to_s}"
       end
-
-      role.recipes << recipe
-    end
-
-    yaml_packages = yaml_role["Packages"] || []
-    yaml_packages.each { |package| role.packages << package }
-
-    if role.save
-      true
-    else
-      self.destroy_dependents
-      errors.add(:load, "error creating role. #{role.errors.messages}")
-      false
     end
   end
 
   def create_cloud(yaml_cloud)
-    cloud = self.clouds.new(name: yaml_cloud["Name"], cidr_block: yaml_cloud["CIDR_Block"])
+    cloud = self.clouds.create(name: yaml_cloud["Name"],
+                               cidr_block: yaml_cloud["CIDR_Block"])
 
-    if not cloud.save
-      self.destroy_dependents
-      errors.add(:load, "error creating cloud. #{cloud.errors.messages}")
-      return false
-    end
-
-    (yaml_cloud["Subnets"] || []).each do |yaml_subnet|
-      subnet = cloud.subnets.new(
-        name: yaml_subnet["Name"], 
-        cidr_block: yaml_subnet["CIDR_Block"],
-        internet_accessible: yaml_subnet["Internet_Accessible"] ? true : false
-      )
-      if not subnet.save
-        self.destroy_dependents
-        errors.add(:load, "error creating Subnet #{subnet.name}. #{subnet.errors.messages}")
-        return false
-      end
-
-      (yaml_subnet["Instances"] || []).each do |yaml_instance|
-        instance = subnet.instances.new(
-          name: yaml_instance["Name"],
-          ip_address: yaml_instance["IP_Address"],
-          ip_address_dynamic: yaml_instance["IP_Address_Dynamic"] ? yaml_instance["IP_Address_Dynamic"] : "",
-          internet_accessible: yaml_instance["Internet_Accessible"] ? true : false,
-          os: yaml_instance["OS"],
-          uuid: `uuidgen`.chomp
+    if cloud.valid?
+      yaml_cloud["Subnets"].try(:each) do |yaml_subnet|
+        subnet = cloud.subnets.create(
+          name: yaml_subnet["Name"],
+          cidr_block: yaml_subnet["CIDR_Block"],
+          internet_accessible: yaml_subnet["Internet_Accessible"]
         )
-        if not instance.save or not instance.valid?
-          self.destroy_dependents
-          errors.add(:load, "error creating Instance #{instance.name}, #{instance.errors.messages}")
-          return false
-        end
 
-        (yaml_instance["Roles"] ? yaml_instance["Roles"] : []).each do |role_name|
-          if not role = roles.find_by_name(role_name)
-            errors.add(:load, 'role not found #{role_name}')
-            return false
+        if subnet.valid?
+          yaml_subnet["Instances"].try(:each) do |yaml_instance|
+            instance = subnet.instances.create(
+              name: yaml_instance["Name"],
+              ip_address: yaml_instance["IP_Address"],
+              ip_address_dynamic: yaml_instance["IP_Address_Dynamic"] || "",
+              internet_accessible: yaml_instance["Internet_Accessible"],
+              os: yaml_instance["OS"],
+              uuid: `uuidgen`.chomp
+            )
+
+            yaml_instance["Roles"].try(:each) do |role_name|
+              role = roles.find_by_name(role_name)
+
+              if role.nil?
+                instance.errors.add(:load, "#{role_name} not found")
+              else
+                instance.roles << role
+              end
+            end
+
+            instance.save
           end
-          instance.roles << role
         end
       end
     end
-
-    true
   end
 
   def create_group(yaml_group)
@@ -294,18 +267,9 @@ class Scenario < ActiveRecord::Base
       file = YAML.load_file(self.path_yml)
 
       load_metadata(file)
+      create_roles(file["Roles"]) unless file["Roles"].nil?
 
-      unless file["Roles"].nil?
-        file["Roles"].each do |role_yaml|
-          return false unless create_role(role_yaml)
-        end
-      end
-
-      unless file["Clouds"].nil?
-        file["Clouds"].each do |cloud_yaml|
-          return false unless create_cloud(cloud_yaml)
-        end
-      end
+      file["Clouds"].each { |cloud_yaml| create_cloud(cloud_yaml) }
 
       unless file["Groups"].nil?
         file["Groups"].each do |group_yaml|
@@ -320,6 +284,7 @@ class Scenario < ActiveRecord::Base
         end
       end
     rescue => e
+      binding.pry if Rails.env.development?
       self.destroy_dependents
       errors.add(:load, e.class.to_s + ' - ' + e.message.to_s + "\n" + e.backtrace.join("\n"))
       return false
@@ -329,8 +294,12 @@ class Scenario < ActiveRecord::Base
       self.update_attribute(:modifiable, true)
     end
 
-    self.reload
-    self.update_attribute(:modified, false)
+    unless errors.any?
+      self.reload
+      self.update_attribute(:modified, false)
+    else
+      logger.error self.errors.full_messages.to_sentence
+    end
   end
 
   def update_yml

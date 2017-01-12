@@ -9,10 +9,26 @@ class Role < ActiveRecord::Base
   serialize :packages, Array
 
   validates :name, presence: true, uniqueness: { scope: :scenario }
+  validates :scenario, presence: true
   validate :instances_stopped
 
   before_destroy :instances_stopped?, prepend: :true
   after_destroy :update_scenario_modified
+
+  def self.from_h(scenario, hash)
+    if hash.is_a? Hash
+      recipes = hash["Recipes"].try(:map) do |recipe_name|
+        scenario.recipes.find_or_create_by(name: recipe_name)
+      end
+
+      Role.new(scenario: scenario,
+               name: hash["Name"],
+               packages: hash["Packages"],
+               recipes: recipes)
+    else
+      Role.new
+    end
+  end
 
   def instances_stopped
     unless instances_stopped?
