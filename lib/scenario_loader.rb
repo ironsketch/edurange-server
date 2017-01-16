@@ -69,6 +69,7 @@ class ScenarioLoader
   end
 
   def recipes_from_names(names)
+    return [] if names.nil?
     raise InvalidYAMLError, "\"Recipes\" is not an array" unless names.respond_to?(:map)
     names.map { |n| @scenario.recipes.find_or_create_by(name: n) }
   end
@@ -132,8 +133,9 @@ class ScenarioLoader
     }
   end
 
-  def roles_from_names(*names)
-    names.map { |n| @scenario.roles.find_or_create_by(name: n) }
+  def roles_from_names(names)
+    return [] if names.nil?
+    names.map { |n| @scenario.roles.find_by(name: n) }
   end
 
   # Groups
