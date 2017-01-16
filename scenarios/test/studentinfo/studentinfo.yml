@@ -7,12 +7,12 @@ Groups:
 - Name: Instructor
   Instructions: 
   Access:
-    Administrator:
-      IP_Visible:
-      - Player_Instance
-    User:
-      IP_Visible:
-      - NAT_Instance
+  - Instance: Player_Instance
+    Administrator: true
+    IP_Visible: true
+  - Instance: NAT_Instance
+    Administrator: false
+    IP_Visible: true
   Users:
   - Login: instructor
     Password: Clzv1aeCs1Yz
@@ -22,11 +22,12 @@ Groups:
 - Name: Students
   Instructions: 
   Access:
-    Administrator:
-    User:
-      IP_Visible:
-      - NAT_Instance
-      - Player_Instance
+  - Instance: NAT_Instance
+    Administrator: false
+    IP_Visible: true
+  - Instance: Player_Instance
+    Administrator: false
+    IP_Visible: true
   Users:
   - Login: student
     Password: sWfwkNGblfv
