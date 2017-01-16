@@ -43,7 +43,7 @@ class ScenarioLoader
   end
 
   def load_metadata
-    @scenario.update(
+    @scenario.update!(
       name: yaml["Name"],
       description: yaml["Description"],
       instructions: yaml["Instructions"],
@@ -133,7 +133,54 @@ class ScenarioLoader
   end
 
   def build_groups
-    # TODO
+    return if yaml["Groups"].nil?
+    yaml_is_array!(yaml["Groups"], "Groups")
+    yaml["Groups"].each do |group_hash|
+      group = @scenario.groups.create!(group_attributes(group_hash))
+      build_players(group, group_hash["Users"])
+      build_instance_groups(group, group_hash["Access"])
+    end
+  end
+
+  def group_attributes(hash)
+    {
+      name: hash["Name"],
+      instructions: hash["Instructions"]
+    }
+  end
+
+  def build_players(group, player_hashes)
+    return if player_hashes.nil?
+    yaml_is_array!(player_hashes, "Users")
+    player_hashes.each do |player_hash|
+      group.players.create!(player_attributes(player_hash))
+    end
+  end
+
+  def player_attributes(hash)
+    user_id = hash["Id"] if User.find_by_id(hash["Id"]).try(:is_student?)
+    user_id ||= nil
+    {
+      login: hash["Login"],
+      password: hash["Password"],
+      user_id: user_id
+    }
+  end
+
+  def build_instance_groups(group, access)
+    return if access.nil?
+    yaml_is_array!(access, "Access")
+    access.each do |instance_group_hash|
+      group.instance_groups.create!(instance_group_attributes(instance_group_hash))
+    end
+  end
+
+  def instance_group_attributes(hash)
+    {
+      instance: @scenario.instances.find_by_name(hash["Instance"]),
+      administrator: hash["Administrator"],
+      ip_visible: hash["IP_Visible"]
+    }
   end
 
   def build_questions
@@ -147,6 +194,58 @@ class ScenarioLoader
   def yaml_is_array!(array, item_name)
     unless array.respond_to?(:each)
       raise InvalidYAMLError, "\"#{item_name}\" must be an array"
+    end
+  end
+
+  class LoaderComponent
+    def initialize(yaml, parent=nil)
+      @yaml = yaml
+      @parent = parent  # a scenario to attach to for clouds, a cloud for subnets, etc
+    end
+
+    def fire!
+      return nil unless @yaml && @parent.is_a?(parent_type)
+      create!
+    end
+
+    private
+
+    def parent_type
+      # meant to be overidden
+      Object
+    end
+
+    def create!
+      # meant to be overidden
+      nil
+    end
+  end
+
+  class RoleLoader < LoaderComponent
+    private
+
+    def parent_type
+
+    end
+
+    def create!
+      # overrides LoaderComponent#create! (see above)
+      yaml_is_array!(@yaml, "Roles")  # throws InvalidYAMLError if @yaml isn't an array
+      @yaml.each { |hash| @parent.roles.create!(role_attributes(role_hash)) }
+    end
+
+    def attributes(hash)
+      raise InvalidYAMLError, "role is not a hash" unless hash.respond_to?(:map)
+      {
+        name: hash["Name"],
+        packages: hash["Packages"],
+        recipes: recipes_from_names(hash["Recipes"])
+      }
+    end
+
+    def recipes_from_names(names)
+      raise InvalidYAMLError, "\"Recipes\" is not an array" unless names.respond_to?(:map)
+      names.map { |n| @parent.recipes.find_or_create_by(name: n) }
     end
   end
 end
