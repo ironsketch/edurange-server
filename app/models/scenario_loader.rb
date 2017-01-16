@@ -52,6 +52,7 @@ class ScenarioLoader
     )
   end
 
+  # Roles
   def build_roles
     return if yaml["Roles"].nil?
     yaml_is_array!(yaml["Roles"], "Roles")
@@ -72,6 +73,7 @@ class ScenarioLoader
     names.map { |n| @scenario.recipes.find_or_create_by(name: n) }
   end
 
+  # Clouds
   def build_clouds
     return if yaml["Clouds"].nil?
     yaml_is_array!(yaml["Clouds"], "Clouds")
@@ -89,6 +91,7 @@ class ScenarioLoader
     }
   end
 
+  # Subnets
   def build_subnets(cloud, subnet_hashes)
     return if subnet_hashes.nil? || cloud.invalid?
     yaml_is_array!(subnet_hashes, "Subnets")
@@ -107,6 +110,7 @@ class ScenarioLoader
     }
   end
 
+  # Instances
   def build_instances(subnet, instance_hashes)
     return if instance_hashes.nil? || subnet.invalid?
     yaml_is_array!(instance_hashes, "Instances")
@@ -132,6 +136,7 @@ class ScenarioLoader
     names.map { |n| @scenario.roles.find_or_create_by(name: n) }
   end
 
+  # Groups
   def build_groups
     return if yaml["Groups"].nil?
     yaml_is_array!(yaml["Groups"], "Groups")
@@ -149,6 +154,7 @@ class ScenarioLoader
     }
   end
 
+  # Players
   def build_players(group, player_hashes)
     return if player_hashes.nil?
     yaml_is_array!(player_hashes, "Users")
@@ -167,6 +173,7 @@ class ScenarioLoader
     }
   end
 
+  # InstaceGroups
   def build_instance_groups(group, access)
     return if access.nil?
     yaml_is_array!(access, "Access")
@@ -183,10 +190,35 @@ class ScenarioLoader
     }
   end
 
+  # Scoring
   def build_questions
-    # TODO
+    return if yaml["Scoring"].nil?
+    yaml_is_array!(yaml["Scoring"], "Scoring")
+    yaml["Scoring"].each do |question_hash|
+      @scenario.questions.create!(question_attributes(question_hash))
+    end
   end
 
+  def question_attributes(hash)
+    if hash["Values"].respond_to? :map
+      values = hash["Values"].map do |value|
+        { value: value["Value"], points: value["Points"] }
+      end
+    else
+      values = nil
+    end
+
+    {
+      type_of: hash["Type"],
+      text: hash["Text"],
+      points: hash["Points"],
+      order: hash["Order"],
+      options: hash["Options"],
+      values: values
+    }
+  end
+
+  # Helpers
   def generate_uuid
     `uuidgen`.chomp
   end
