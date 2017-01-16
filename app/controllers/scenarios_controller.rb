@@ -116,8 +116,10 @@ class ScenariosController < ApplicationController
   # POST /scenarios
   # POST /scenarios.json
   def create
-    @scenario = @user.scenarios.new(scenario_params)
-    @scenario.save
+    @scenario = ScenarioLoader.new(user: @user,
+                                   name: scenario_params[:name],
+                                   location: scenario_params[:location])
+                              .build_scenario!
 
     respond_to do |format|
       if @scenario.errors.any?
