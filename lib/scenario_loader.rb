@@ -7,7 +7,7 @@ class ScenarioLoader
     @location = args[:location] || :production
   end
 
-  def build_scenario!
+  def fire!
     @scenario = Scenario.new(user: @user, name: @name, location: @location)
     create_scenario! if @scenario.save
   end
