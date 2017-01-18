@@ -31,19 +31,14 @@ class ScenarioLoader
       build_groups
       build_questions
     rescue => e
-      Rails.logger.error e.message
-      Rails.logger.error e.backtrace.join("\n")
       binding.pry if Rails.env.development? || Rails.env.test?
-      @scenario.destroy!
-      return nil
+      @scenario.errors.add(:load, "Exception caught during loading: #{e}. "\
+                                  "See log for details.")
+      Rails.logger.error(e.message)
+      Rails.logger.error(e.backtrace.join("\n"))
     end
 
-    if @scenario.valid?
-      return @scenario
-    else
-      @scenario.destroy!
-      return nil
-    end
+    @scenario
   end
 
   def yaml
