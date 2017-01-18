@@ -7,14 +7,18 @@ Groups:
 - Name: Instructor
   Instructions: 
   Access:
-    Administrator:
-      IP_Visible:
-      - Team_1_Instance
-      - Battlespace_1_Instance
-      - Battlespace_10_Instance
-    User:
-      IP_Visible:
-      - NAT_Instance
+  - Instance: Team_1_Instance
+    Administrator: true
+    IP_Visible: true
+  - Instance: Battlespace_1_Instance
+    Administrator: true
+    IP_Visible: true
+  - Instance: Battlespace_10_Instance
+    Administrator: true
+    IP_Visible: true
+  - Instance: NAT_Instance
+    Administrator: false
+    IP_Visible: true
   Users:
   - Login: instructor
     Password: vLCu3Crf
@@ -24,12 +28,12 @@ Groups:
 - Name: Team_1
   Instructions: 
   Access:
-    Administrator:
-      IP_Visible:
-      - Team_1_Instance
-    User:
-      IP_Visible:
-      - NAT_Instance
+  - Instance: Team_1_Instance
+    Administrator: true
+    IP_Visible: true
+  - Instance: NAT_Instance
+    Administrator: false
+    IP_Visible: true
   Users: 
 Clouds:
 - Name: Cloud_1
@@ -55,7 +59,6 @@ Clouds:
       Internet_Accessible: false
       Roles:
       - attacker
-
   - Name: Battlespace_Subnet
     CIDR_Block: 10.0.0.0/17
     Internet_Accessible: false
