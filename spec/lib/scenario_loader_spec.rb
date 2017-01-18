@@ -1,6 +1,18 @@
 require 'rails_helper'
 
 describe ScenarioLoader do
+  describe "production scenarios" do
+    let(:user) { create(:instructor) }
+
+    YmlRecord.yml_headers('production', nil).each do |scenario|
+      it "loads #{scenario[:name]}" do
+        expect(
+          ScenarioLoader.new(name: scenario[:name], location: :production, user: user).fire!
+        ).to be_valid
+      end
+    end
+  end
+
   describe "with test1.yml", :focus do
     before :all do
       @user = create(:instructor)
