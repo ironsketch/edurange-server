@@ -10,14 +10,17 @@ class ScenarioLoader
   # - Wonder where ScenarioLoader is called from?
   # See ScenariosController#create (app/controllers/scenarios_controller.rb)
 
-  def initialize(**args)
-    @user = args[:user]
-    @name = args[:name]
-    @location = args[:location] || :production
+  def initialize(scenario=nil, **args)
+    if scenario
+      @scenario = scenario
+    else
+      @scenario = Scenario.new(user: args[:user],
+                               name: args[:name],
+                               location: args[:location])
+    end
   end
 
   def fire!
-    @scenario = Scenario.new(user: @user, name: @name, location: @location)
     create_scenario! if @scenario.save
   end
 
@@ -31,9 +34,8 @@ class ScenarioLoader
       build_groups
       build_questions
     rescue => e
-      binding.pry if Rails.env.development? || Rails.env.test?
-      @scenario.errors.add(:load, "Exception caught during loading: #{e}. "\
-                                  "See log for details.")
+      #binding.pry if Rails.env.development? || Rails.env.test?
+      @scenario.errors.add(:load, "#{e} (see log for details)")
       Rails.logger.error(e.message)
       Rails.logger.error(e.backtrace.join("\n"))
     end

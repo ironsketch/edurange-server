@@ -160,8 +160,7 @@ class ScenarioManagement
     	FileUtils.rm_r clone.path
     end
 
-    clone.save
-    clone
+    ScenarioLoader.new(clone).fire!
 	end
 
 end

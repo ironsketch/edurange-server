@@ -105,14 +105,10 @@ class Scenario < ActiveRecord::Base
     yml["Groups"] = self.groups.empty? ? nil : self.groups.map { |group| 
       { "Name" => group.name,
         "Instructions" => group.instructions,
-        "Access" => { 
-          "Administrator" => group.instance_groups.none? {|ig| ig.administrator} ? nil : {
-            "IP_Visible" => group.instance_groups.select{ |ig| ig.administrator and ig.ip_visible }.map{ |ig| ig.instance.name },
-            "IP_Hidden" => group.instance_groups.select{ |ig| ig.administrator and not ig.ip_visible }.map{ |ig| ig.instance.name }
-            },
-          "User" => group.instance_groups.none? {|ig| not ig.administrator} ? nil : {
-            "IP_Visible" => group.instance_groups.select{ |ig| not ig.administrator and ig.ip_visible }.map{ |ig| ig.instance.name },
-            "IP_Hidden" => group.instance_groups.select{ |ig| not ig.administrator and not ig.ip_visible }.map{ |ig| ig.instance.name }
+        "Access" => group.instance_groups.empty? ? nil : group.instance_groups.map { |access|
+          { "Instance" => access.instance.name,
+            "Administrator" => access.administrator,
+            "IP_Visible" => access.ip_visible
           }
         },
         "Users" => group.players.empty? ? nil : group.players.map { |p| { 
