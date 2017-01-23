@@ -148,7 +148,9 @@ class ScenarioManagement
     newyml = File.open("#{Rails.root}/scenarios/custom/#{user.id}/#{clone.name.downcase}/#{clone.name.downcase}.yml", "w")
     File.open(scenario_path_yml).each do |line|
       if /\s*Name:\s*#{name}/.match(line)
-        line = line.gsub("#{name}", clone.name)
+        if not /-\s*Name:\s*#{name}/.match(line)
+          line = line.gsub("#{name}", clone.name)
+        end
       end
       newyml.write line
     end
