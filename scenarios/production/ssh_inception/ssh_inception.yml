@@ -4,8 +4,7 @@ Description: Ssh Inception teaches students the basics of ssh, a secure a progra
   for logging into a remote machine.
 Instructions: Instruct students to connect to the first machine, and further login
   instructions will appear onscreen once connected. They can also be found in /etc/motd
-InstructionsStudent: Login to the NAT_Instance. Further instructions will be found
-  there.
+InstructionsStudent: Login to the NAT_Instance. Instructions will be displayed upon logging in and at each new checkpoint.
 Groups:
 - Name: Instructor
   Instructions: 

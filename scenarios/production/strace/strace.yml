@@ -2,6 +2,7 @@
 Name: Strace
 Description: This game uses strace to examine executable files.
 Instructions: Players will first ssh into the NAT using it's Public IP Address.
+InstructionsStudent: First ssh into the NAT. Follow instructions as given in the student manual.
 Roles:
 - Name: NAT
   Packages:

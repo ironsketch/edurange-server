@@ -2,8 +2,9 @@
 Name: Total_Recon
 Description: Total Recon is a progressive, story-based game designed to teach nmap
   network reconnaissance.
-Instructions: ''
-InstructionsStudent: ''
+Instructions: Instruct students to connect to the first machine, and further login
+  instructions will appear onscreen once connected.
+InstructionsStudent: Login to Home. Instructions will be displayed upon logging in and at each new checkpoint.
 Groups:
 - Name: Instructor
   Instructions: 
@@ -75,11 +76,6 @@ Groups:
     Administrator: false
     IP_Visible: false
   Users:
-  - Login: test1
-    Password: password
-    Id: 
-    UserId: 
-    StudentGroupId: 
 Clouds:
 - Name: Cloud_1
   CIDR_Block: 10.0.0.0/16

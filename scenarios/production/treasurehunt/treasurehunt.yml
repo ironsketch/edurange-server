@@ -1,9 +1,10 @@
 ---
 Name: TreasureHunt
-Description: To become familiar with the command line interface and utilities of linux.
-  Goal is to find the passwords of non-player users.
-Instructions: 
-InstructionsStudent: 
+Description: Treasure Hunt is an exercise that teaches about permissions and other security loopholes in Linux.
+  The goal is to find the passwords of 16 fake users.
+Instructions: Detailed instructions can be found in the student manual. Refer the students there.
+InstructionsStudent: Detailed instructions can be found in the student manual. Please look there to get started
+  with this scenario.
 Groups:
 - Name: Instructor
   Instructions: 
