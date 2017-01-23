@@ -34,7 +34,7 @@ class ScenarioLoader
       build_groups
       build_questions
     rescue => e
-      binding.pry if Rails.env.development? || Rails.env.test?
+      #binding.pry if Rails.env.development? || Rails.env.test?
       @scenario.errors.add(:load, "#{e} (see log for details)")
       Rails.logger.error(e.message)
       Rails.logger.error(e.backtrace.join("\n"))
