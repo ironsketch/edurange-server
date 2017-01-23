@@ -32,4 +32,17 @@ describe Scenario do
       end
     end
   end
+
+  describe "#clone" do
+    let(:scenario) { build(:scenario.clone) }
+
+    it "returns a valid custom scenario" do
+      expect(scenario).to be_valid
+      expect(scenario.location).to eq(:custom)
+    end
+
+    it "creates a new yml file" do
+      expect(File.exists?(scenario.path_yml)).to eq(true)
+    end
+  end
 end
