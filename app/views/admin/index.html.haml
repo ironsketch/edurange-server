@@ -57,8 +57,10 @@
             %table.table#students-table
               %tr
                 %td
-                  <a href="javascript:$('#students-table input:checkbox').prop('checked', true);">all</a>,
-                  <a href="javascript:$('#students-table input:checkbox').prop('checked', false);">none</a>
+                  = link_to 'all', "javascript:void(0)",
+                    onclick: "$('#students-table input:checkbox').prop('checked', true);"
+                  = link_to 'none', "javascript:void(0)",
+                    onclick: "$('#students-table input:checkbox').prop('checked', false);"
                 %th Name
                 %th Email
                 %th Organization
@@ -67,8 +69,10 @@
                 = render 'student', user: user
               %tr#foot
                 %td{ colspan: "5" }
-                  <a href="javascript:$('#students-table input:checkbox').prop('checked', true);">all</a>,
-                  <a href="javascript:$('#students-table input:checkbox').prop('checked', false);">none</a>,
+                  = link_to 'all', "javascript:void(0)",
+                    onclick: "$('#students-table input:checkbox').prop('checked', true);"
+                  = link_to 'none', "javascript:void(0)",
+                    onclick: "$('#students-table input:checkbox').prop('checked', false);"
                   %b with selected:
                   = (link_to 'add to all', "javascript:void(0);",
                     onclick: "$('#students-table-form').attr('action', '#{admin_student_add_to_all_path}');$('#students-table-form').submit();") + ','

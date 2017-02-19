@@ -17,8 +17,10 @@
       %table.table{ id: "student-group-#{student_group.id}-table"}
         %tr
           %td
-            <a href="javascript:$('#student-group-#{student_group.id} input:checkbox').prop('checked',true);">all</a>,
-            <a href="javascript:$('#student-group-#{student_group.id} input:checkbox').prop('checked',false);">none</a>
+            = link_to 'all', "javascript:void(0)",
+              onclick: "$('#student-group-#{student_group.id} input:checkbox').prop('checked',true);"
+            = link_to 'none', "javascript:void(0)",
+              onclick: "$('#student-group-#{student_group.id} input:checkbox').prop('checked',false);"
           %th Name
           %th Email
           %th Organization
@@ -27,8 +29,10 @@
           = render 'student_group_student', student: student, student_group: student_group
         %tr#foot
           %td{ colspan: '5' }
-            <a href="javascript:$('#student-group-#{student_group.id} input:checkbox').prop('checked',true);">all</a>,
-            <a href="javascript:$('#student-group-#{student_group.id} input:checkbox').prop('checked',false);">none</a>,
+            = link_to 'all', "javascript:void(0)",
+              onclick: "$('#student-group-#{student_group.id} input:checkbox').prop('checked',true);"
+            = link_to 'none', "javascript:void(0)",
+              onclick: "$('#student-group-#{student_group.id} input:checkbox').prop('checked',false);"
             %b with selected:
             - if student_group.name == "All"
               = link_to 'add to ', "javascript:void(0)",
