@@ -58,7 +58,7 @@
       %table.table{ id: "student-group-#{student_group.id}-table"}
         %tr
           %td
-            = link_to 'add', "javascript:void(0)",
+            = link_to 'all', "javascript:void(0)",
               onclick: "$('#student-group-#{student_group.id} input:checkbox').prop('checked',true);"
             = link_to 'none', "javascript:void(0)",
               onclick: "$('#student-group-#{student_group.id} input:checkbox').prop('checked',false);"
@@ -70,7 +70,7 @@
           = render 'student', student: student, student_group: student_group
         %tr#foot
           %td{ colspan: '5' }
-            = link_to 'add', "javascript:void(0)",
+            = link_to 'all', "javascript:void(0)",
               onclick: "$('#student-group-#{student_group.id} input:checkbox').prop('checked',true);"
             = link_to 'none', "javascript:void(0)",
               onclick: "$('#student-group-#{student_group.id} input:checkbox').prop('checked',false);"
