@@ -9,6 +9,7 @@ Roles:
   - git
   - gdb
   - build-essential
+  - colordiff
   Recipes:
   - sshd_password_login
   - strace
