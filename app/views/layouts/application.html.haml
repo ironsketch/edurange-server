@@ -8,9 +8,12 @@
     = javascript_include_tag 'application', 'data-turbolinks-track' => true
     = csrf_meta_tags
     = yield(:head)
-  %body
-    %header
-      = render 'layouts/navigation'
-    %main{:role => "main"}
-      = render 'layouts/messages'
-      = yield
+  - if controller.controller_name == 'schedules'
+    %body{"data-turbolinks" => "true"}
+  - else
+    %body{"data-turbolinks" => "false"}
+  %header
+    = render 'layouts/navigation'
+  %main{:role => "main"}
+    = render 'layouts/messages'
+    = yield
