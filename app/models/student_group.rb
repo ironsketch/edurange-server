@@ -4,6 +4,7 @@ class StudentGroup < ActiveRecord::Base
   has_many :users, through: :student_group_users
 
   validates :name, presence: true, uniqueness: { scope: :user, message: "Name taken" } 
+  before_save :make_registration_code
 
   # before_destroy :check_if_all
 
@@ -29,6 +30,14 @@ class StudentGroup < ActiveRecord::Base
     end
 
     return student_group_users
+  end
+
+  def make_registration_code
+    if not self.name == "All"
+      if not self.registration_code
+        self.update(registration_code: SecureRandom.hex[0..7])
+      end
+    end
   end
 
 end
