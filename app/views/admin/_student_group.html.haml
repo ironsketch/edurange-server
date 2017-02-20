@@ -11,7 +11,11 @@
       data: { toggle: 'collapse', target: "#student-group-#{student_group.id}-collapse", parent: '#student_groups' }
 
   %div.collapse{ id: "student-group-#{student_group.id}-collapse", class: (student_group.name == "All" ? "in" : "") }
-
+    - if student_group.name != "All"
+      %div{ id: "student-group-#{student_group.id}-registration-code", style: "margin-left: 40px"}
+        %label
+          Registration Code: 
+        = student_group.registration_code
     = form_tag '#', remote: true, method: :post, class: 'form-inline' do
 
       %table.table{ id: "student-group-#{student_group.id}-table"}

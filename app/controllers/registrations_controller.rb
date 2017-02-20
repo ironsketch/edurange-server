@@ -2,8 +2,8 @@ class RegistrationsController < Devise::RegistrationsController
   before_filter :update_sanitized_params, if: :devise_controller?
 
   def update_sanitized_params
-    devise_parameter_sanitizer.for(:sign_up) {|u| u.permit(:name, :email, :password, :password_confirmation, :registration_code)}
-    devise_parameter_sanitizer.for(:account_update) {|u| u.permit(:name, :email, :password, :password_confirmation, :current_password)}
+    devise_parameter_sanitizer.permit(:sign_up) {|u| u.permit(:name, :email, :password, :password_confirmation, :registration_code)}
+    devise_parameter_sanitizer.permit(:account_update) {|u| u.permit(:name, :email, :password, :password_confirmation, :current_password)}
   end
 
   def create
@@ -11,6 +11,15 @@ class RegistrationsController < Devise::RegistrationsController
     query = "registration_code = ? AND (role = 3 OR role = 2)"
     puts "query:#{query}"
     instructor = User.where(query, params[:user][:registration_code]).first
+    if instructor.nil?
+      query = "registration_code = ?"
+      stugroup = StudentGroup.where(query, params[:user][:registration_code]).first
+      if not stugroup.nil?
+        if stugroup.user.role == "admin" or "instructor"
+          instructor = stugroup.user
+        end
+      end
+    end
     if params[:user][:registration_code] == '' or !instructor
       params[:user][:registration_code] = nil
       build_resource(sign_up_params)
@@ -29,8 +38,13 @@ class RegistrationsController < Devise::RegistrationsController
         sign_up(resource_name, resource)
 
         # assign to instructors default group
-        sgu = instructor.student_groups.find_by(name: "All").student_group_users.new(user_id: resource.id)
-        sgu.save
+        sgu_all = instructor.student_groups.find_by(name: "All").student_group_users.new(user_id: resource.id)
+        sgu_all.save
+
+        if not stugroup.nil?
+          sgu = stugroup.student_group_users.new(user_id: resource.id)
+          sgu.save
+        end
 
         respond_with resource, location: after_sign_up_path_for(resource)
       else

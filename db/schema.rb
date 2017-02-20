@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161220060742) do
+ActiveRecord::Schema.define(version: 20170220021534) do
 
   create_table "answers", force: :cascade do |t|
     t.boolean  "correct"
@@ -223,10 +223,11 @@ ActiveRecord::Schema.define(version: 20161220060742) do
   end
 
   create_table "student_groups", force: :cascade do |t|
-    t.integer  "user_id",                 null: false
-    t.string   "name",       default: "", null: false
+    t.integer  "user_id",                        null: false
+    t.string   "name",              default: "", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "registration_code"
   end
 
   create_table "subnets", force: :cascade do |t|
