@@ -233,7 +233,7 @@ class Question < ActiveRecord::Base
 
     self.values.each_with_index do |value, i|
 
-      if self.options.include? "ignore case"
+      if self.options.include? "ignore-case"
         self.answers.where("user_id = ?", user_id).each do |answer|
           if answer.text.casecmp(text) == 0
             answer.errors.add(:duplicate, "duplicate answer")
