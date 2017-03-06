@@ -1,3 +1,9 @@
+# Make Swapfile
+fallocate -l 2G /swapfile
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
+
 # Put chef stuff in place
 mkdir -p /root/chef/cookbooks/op/recipes
 cd /root/chef
@@ -13,12 +19,7 @@ EOF
 # /root/chef/solo.json
 cat << EOF > solo.json
 {
-  "run_list": [ "recipe[op::default]" ]
-}
-EOF
-cat << EOF > solo_err.json
-{
-  "run_list": [ "recipe[op::cheferror]" ]
+  "run_list": [ "recipe[op::cheferror]", "recipe[op::default]" ]
 }
 EOF
 
@@ -41,6 +42,13 @@ ruby_block 'chef_error' do
 	end
 	action :run
 end
+EOF
+
+# Bash Histories
+cat << EOF > bash_histories.json
+{
+  "run_list": [ "recipe[op::bash_histories]" ]
+}
 EOF
 
 cat << EOF > /root/chef/bash_histories.rb
@@ -119,7 +127,6 @@ chmod +x /root/chef/cron.sh
 
 wget -O /root/chef/cookbooks/op/recipes/default.rb '<%= instance.cookbook_url %>'
 chef-solo -c solo.rb -j solo.json
-chef-solo -c solo.rb -j solo_err.json
 
 ruby /root/chef/bash_histories.rb &
 
