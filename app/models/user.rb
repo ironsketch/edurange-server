@@ -4,7 +4,7 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :registerable, :recoverable, :rememberable, :trackable, :validatable
   enum role: [:user, :vip, :admin, :instructor, :student]
 
-  has_many :scenarios
+  has_many :scenarios, dependent: :destroy
   has_many :schedules
   has_many :student_groups, dependent: :destroy
   has_many :student_group_users, dependent: :destroy
