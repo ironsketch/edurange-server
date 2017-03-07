@@ -41,9 +41,6 @@ module ProviderAws
   end
 
   def aws_cloud_unboot
-
-    return if not self.driver_id
-
     # get VPC
     log "AWS: getting VPC '#{self.driver_id}'"
     begin
@@ -278,7 +275,12 @@ module ProviderAws
     Timeout.timeout(360) { sleep 1 while not aws_call('aws_obj_exists?', obj: elastic_ip) }
 
     log "AWS: associating ElastipIP '#{elastic_ip.public_ip}' with Instance '#{instance.id}'"
-    aws_call('aws_instance_elastic_ip_associate', instance: instance, elastic_ip: elastic_ip)
+    aws_call(
+      'aws_instance_elastic_ip_associate',
+      instance: instance,
+      elastic_ip: elastic_ip,
+      errs: { AWS::EC2::Errors::InvalidAllocationID::NotFound => 60 }
+    )
   
     self.update_attribute(:ip_address_public, elastic_ip.public_ip)
   end
@@ -304,17 +306,17 @@ module ProviderAws
     path = self.scenario.statistic.data_path_instance(self.name)
 
     log "AWS: saving bash history from Instance '#{self.name}'"
-    File.open(self.scenario.statistic.data_instance_bash_histories_path(self.name), "wb") do |f| 
+    File.open(self.scenario.statistic.data_instance_bash_histories_path(self.name), "wb") do |f|
       f.write(aws_S3_object_get_and_read(bucket, aws_S3_object_name('bash_history')) )
     end
 
     log "AWS: saving exit status from Instance '#{self.name}'"
-    File.open(self.scenario.statistic.data_instance_exit_statuses_path(self.name), "wb") do |f| 
+    File.open(self.scenario.statistic.data_instance_exit_statuses_path(self.name), "wb") do |f|
       f.write(aws_S3_object_get_and_read(bucket, aws_S3_object_name('exit_status')) )
     end
 
     log "AWS: saving script log from Instance '#{self.name}'"
-    File.open(self.scenario.statistic.data_instance_script_logs_path(self.name), "wb") do |f| 
+    File.open(self.scenario.statistic.data_instance_script_logs_path(self.name), "wb") do |f|
       f.write(aws_S3_object_get_and_read(bucket, aws_S3_object_name('script_log')) )
     end
   end
@@ -428,6 +430,7 @@ module ProviderAws
   rescue AWS::S3::Errors::NoSuchKey => e
     return ""
   end
+
 
   # Helper Functions
 
@@ -563,7 +566,7 @@ module ProviderAws
       private_ip_address: self.ip_address,
       key_name: Rails.configuration.x.aws['ec2_key_pair_name'],
       user_data: self.generate_init,
-      instance_type: "t2.nano",
+      instance_type: "t2.micro",
       subnet: self.subnet.driver_id
     )
   end
