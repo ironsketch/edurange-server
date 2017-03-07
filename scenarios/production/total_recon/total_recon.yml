@@ -500,7 +500,7 @@ Scoring:
   Options:
   - ignore-case
   Values:
-  - Value: look_in_here
+  - Value: look-in-here
     Points: '10'
   Order: 16
   Points: 10
