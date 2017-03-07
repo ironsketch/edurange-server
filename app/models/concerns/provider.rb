@@ -242,7 +242,7 @@ module Provider
       end
     end
 
-    @opts[:timeout] = 60*4
+    @opts[:timeout] = 60*10
 
     # get objects
     @opts[:resources].each do |resource_name, values|
