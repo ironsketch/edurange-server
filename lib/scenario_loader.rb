@@ -32,6 +32,7 @@ class ScenarioLoader
       build_roles
       build_clouds
       build_groups
+      @scenario.reload
       build_questions
     rescue => e
       #binding.pry if Rails.env.development? || Rails.env.test?
@@ -40,7 +41,7 @@ class ScenarioLoader
       Rails.logger.error(e.backtrace.join("\n"))
     end
 
-    @scenario
+    @scenario.reload
   end
 
   def yaml
