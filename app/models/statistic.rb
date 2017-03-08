@@ -28,7 +28,13 @@ class Statistic < ActiveRecord::Base
 
   def gen_info
     return if not self.scenario
-    info = { instances: {} }
+    info = {
+      instances: {},
+      scenario: {
+        id: self.scenario.id,
+        name: self.scenario.name,
+      }
+    }
     self.scenario.instances.each do |i|
       info[:instances][i.name] = {id: i.id, users: i.player_names }
     end
@@ -310,6 +316,10 @@ class Statistic < ActiveRecord::Base
     File.open(path, 'r').read()
   end
 
+  def data_all_name
+    "EDURange-#{self.scenario_created_at.strftime("%y_%m_%d")}_#{self.scenario_name}_#{self.scenario_id}_statistics.zip"
+  end
+ 
   def data_all_as_zip
     files = {}
     # go through each instance and user
@@ -326,7 +336,7 @@ class Statistic < ActiveRecord::Base
 
     # return files
 
-    temp_file = Tempfile.new("statistics.zip")
+    temp_file = Tempfile.new(self.data_all_name)
     begin
       Zip::OutputStream.open(temp_file.path) do |zos|
         files.each do |name, path|
@@ -356,7 +366,7 @@ class Statistic < ActiveRecord::Base
   end
 
   def data_instance_user_bash_history_download_name(instance_name, user_name)
-    "#{self.scenario_created_at.strftime("%y_%m_%d")}_#{self.scenario_name}_#{self.scenario_id}_#{instance_name}_#{user_name}_bash_history"
+    "EDURange-#{self.scenario_created_at.strftime("%y_%m_%d")}_#{self.scenario_name}_#{self.scenario_id}_#{instance_name}_#{user_name}_bash_history"
   end
 
   def data_instance_exit_statuses_path(instance_name)
@@ -364,7 +374,7 @@ class Statistic < ActiveRecord::Base
   end
 
   def data_instance_exit_statuses_download_name(instance_name)
-    "#{self.scenario_created_at.strftime("%y_%m_%d")}_#{self.scenario_name}_#{self.scenario_id}_#{instance_name}_exit_statuses"
+    "EDURange-#{self.scenario_created_at.strftime("%y_%m_%d")}_#{self.scenario_name}_#{self.scenario_id}_#{instance_name}_exit_statuses"
   end
 
   def data_instance_script_logs_path(instance_name)
@@ -372,7 +382,7 @@ class Statistic < ActiveRecord::Base
   end
 
   def data_instance_script_logs_download_name(instance_name)
-    "#{self.scenario_created_at.strftime("%y_%m_%d")}_#{self.scenario_name}_#{self.scenario_id}_#{instance_name}_script_logs"
+    "EDURange-#{self.scenario_created_at.strftime("%y_%m_%d")}_#{self.scenario_name}_#{self.scenario_id}_#{instance_name}_script_logs"
   end
 
   def data_instance_bash_histories_path(instance_name)
@@ -447,7 +457,7 @@ class Statistic < ActiveRecord::Base
   end
 
   def data_path
-    data_path_check "#{Rails.root}/data/#{Rails.env}/#{self.user.id}/#{self.scenario_created_at.strftime("%y_%m_%d")}_#{self.scenario.name}_#{self.scenario.id}"
+    data_path_check "#{Rails.root}/data/#{Rails.env}/#{self.user.id}/#{self.created_at.strftime("%y_%m_%d")}_#{self.resource_info[:scenario][:name]}_#{self.resource_info[:scenario][:id]}"
   end
 
   def data_path_boot

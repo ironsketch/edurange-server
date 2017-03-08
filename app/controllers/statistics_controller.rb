@@ -107,7 +107,7 @@ class StatisticsController < ApplicationController
     #   temp_file.close
     #   temp_file.unlink
     # end
-    send_data(@statistic.data_all_as_zip, :type => 'application/zip', :filename => "statistic_data.zip")
+    send_data(@statistic.data_all_as_zip, :type => 'application/zip', :filename => @statistic.data_all_name)
   end
 
   def download_instance_user_bash_history
