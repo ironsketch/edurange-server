@@ -276,6 +276,7 @@ class Statistic < ActiveRecord::Base
     students = []
     self.scenario.questions.each do |q|
       q.answers.each do |a|
+        next if not a.user
         students.push({
           "Id" => a.user.id,
           "Name" => a.user.name,
