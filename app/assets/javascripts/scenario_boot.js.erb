@@ -12,7 +12,8 @@ function get_scnario_status (id) {
   });
   // console.log(student_answers);
 
-  resource = resource = '/scenarios/' + id + "/status/?" + $.param({student_answers: student_answers});
+  //resource = resource = '/scenarios/' + id + "/status/?" + $.param({student_answers: student_answers});
+  resource = resource = '/scenarios/' + id + "/status/";
   $.post(resource, function(data) {
     // alert('done');
   });
