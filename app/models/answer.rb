@@ -1,5 +1,5 @@
 class Answer < ActiveRecord::Base
-	belongs_to :user
+  belongs_to :user
   belongs_to :question
 
   validate :validate_text
@@ -7,15 +7,15 @@ class Answer < ActiveRecord::Base
   validate :validate_essay_points_earned
 
   def validate_text
-  	if self.question.type_of == "Essay" and self.text_essay == ""
-  		errors.add(:text_essay, 'must not be blank')
-  		return false
-  	else
-  		if self.text == ""
-  			errors.add(:text, 'must not be blank')
-  			return false
-  		end
-  	end
+    if self.question.type_of == "Essay" and self.text_essay == ""
+      errors.add(:text_essay, 'must not be blank')
+      return false
+    else
+      if self.text == ""
+  	errors.add(:text, 'must not be blank')
+  	return false
+      end
+    end
     true
   end
 

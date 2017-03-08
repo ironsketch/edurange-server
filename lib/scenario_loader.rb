@@ -10,17 +10,14 @@ class ScenarioLoader
   # - Wonder where ScenarioLoader is called from?
   # See ScenariosController#create (app/controllers/scenarios_controller.rb)
 
-  def initialize(scenario=nil, **args)
-    if scenario
-      @scenario = scenario
-    else
-      @scenario = Scenario.new(user: args[:user],
-                               name: args[:name],
-                               location: args[:location])
-    end
+  def initialize(**args)
+    @user = args[:user]
+    @name = args[:name]
+    @location = args[:location] || :production
   end
 
   def fire!
+    @scenario = Scenario.new(user: @user, name: @name, location: @location)
     create_scenario! if @scenario.save
   end
 
@@ -35,8 +32,9 @@ class ScenarioLoader
       @scenario.reload
       build_questions
     rescue => e
-      #binding.pry if Rails.env.development? || Rails.env.test?
-      @scenario.errors.add(:load, "#{e} (see log for details)")
+      binding.pry if Rails.env.development? || Rails.env.test?
+      @scenario.errors.add(:load, "Exception caught during loading: #{e}. "\
+                                  "See log for details.")
       Rails.logger.error(e.message)
       Rails.logger.error(e.backtrace.join("\n"))
     end
@@ -139,6 +137,28 @@ class ScenarioLoader
                                        instructions: hash["Instructions"])
       build_players(group, hash["Users"])
       build_instance_groups(group, hash["Access"])
+      if hash["Variables"]
+        build_variables(group, hash["Variables"])
+      end
+    end
+  end
+
+  def build_variables(group, variables)
+    return if variables.nil?
+    raise InvalidYAMLError unless variables.respond_to? :each
+
+    # Instance variables
+    if variables['Instance']
+      variables['Instance'].each do |var|
+        group.variable_instance_add(var['Name'], var['Type'], var['Value'])
+      end
+    end
+
+    # Player variables
+    if variables['Player']
+      variables['Player'].each do |var|
+        group.variable_player_add(var['Name'], var['Type'], var['Value'])
+      end
     end
   end
 
@@ -149,7 +169,18 @@ class ScenarioLoader
 
     player_hashes.each do |hash|
       raise InvalidYAMLError unless hash.respond_to? :[]
-      group.players.create!(login: hash["Login"], password: hash["Password"])
+      if hash["UserId"]
+        if user = User.find(hash["UserId"])
+          group.players.create!(
+            login: hash["Login"], 
+            password: hash["Password"], 
+            student_group_id: hash["StudentGroupId"], 
+            user: user
+          )
+        end
+      else
+        group.players.create!(login: hash["Login"], password: hash["Password"])
+      end
     end
   end
 

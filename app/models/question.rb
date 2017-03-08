@@ -1,4 +1,5 @@
 class Question < ActiveRecord::Base
+
   belongs_to :scenario
   has_many :answers, dependent: :destroy
   serialize :options
@@ -16,7 +17,7 @@ class Question < ActiveRecord::Base
 
   TYPES = ["String", "Number", "Essay"]
   # TYPES = ["String", "Number", "Essay", "Event"]
-  OPTIONS_STRING = ["ignore-case"]
+  OPTIONS_STRING = ["ignore-case", "variable-group-player"]
   OPTIONS_NUMBER = ["accept-integer", "accept-decimal", "accept-hex"]
   OPTIONS_ESSAY = ["larger-text-field"]
 
@@ -115,6 +116,7 @@ class Question < ActiveRecord::Base
       # check for special
       if match_data = /\$.+\$/.match(value[:value])
         name = match_data.to_s.gsub("$", "")
+        puts self.scenario.instances.size
         if instance = self.scenario.instances.select { |i| i.name == name }.first
           value[:special] = value[:value]
           value[:value] = value[:special].gsub(match_data.to_s, instance.ip_address)
@@ -232,6 +234,17 @@ class Question < ActiveRecord::Base
     end
 
     self.values.each_with_index do |value, i|
+
+      if self.options.include? "variable-group-player"
+        group_name, var_name = value[:value].split(':')
+        if group = self.scenario.groups.find_by_name(group_name)
+          group.variables[:player][:vars].each do |player, vars|
+            if player.user_id == user_id
+              value[:value] = vars[var_name].val
+            end
+          end
+        end
+      end
 
       if self.options.include? "ignore-case"
         self.answers.where("user_id = ?", user_id).each do |answer|

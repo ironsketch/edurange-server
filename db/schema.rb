@@ -64,6 +64,7 @@ ActiveRecord::Schema.define(version: 20170220021534) do
     t.datetime "updated_at"
     t.integer  "scenario_id"
     t.text     "instructions", default: ""
+    t.string   "variables"
   end
 
   create_table "instance_groups", force: :cascade do |t|

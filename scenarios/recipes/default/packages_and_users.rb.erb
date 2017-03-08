@@ -7,6 +7,13 @@
   <% end %>
 <% end %>
 
+bash 'dirs' do
+  user 'root'
+  code <<-EOF
+    mkdir -p /root/edurange
+  EOF
+end
+
 # Users
 <% instance.users.each do |user| %>
 user '<%= user.login %>' do
@@ -16,7 +23,14 @@ user '<%= user.login %>' do
   shell '/bin/bash'
   action :create
 end
+bash 'players file' do
+  user 'root'
+  code <<-EOF
+    echo <%= user.login %> >> /root/edurange/players
+  EOF
+end
 <% end %>
+
 # Administrators
 <% instance.administrators.each do |administrator| %>
 user '<%= administrator.login %>' do
@@ -27,4 +41,57 @@ user '<%= administrator.login %>' do
   group 'sudo'
   action :create
 end
+
+group "<%= administrator.login %>" do
+  members "<%= administrator.login %>"
+end
+
 <% end %>
+
+# do variable tools
+script "var tools" do
+  interpreter "bash"
+  user "root"
+  code <<-EOH
+cat << EOF > /usr/bin/edurange-get-var
+#!/bin/bash
+if [[ \\$# -eq 0 ]]; then
+  exit 0
+fi
+if [ "\\$1" == "instance" ]; then
+  varfile=/root/edurange/variables/instance
+  var=\\$2
+elif [ "\\$1" == "user" ]; then
+  varfile=/root/edurange/variables/users/\\$2
+  var=\\$3
+fi
+if [ -f \\$varfile ]; then
+  result=\\`cat \\$varfile | grep -e ^\\$var:\\`
+  if [ ! -z "\\$result" ]; then
+    echo \\${result#\\${var}:}
+  fi
+fi
+EOF
+chmod 700 /usr/bin/edurange-get-var
+  EOH
+end
+
+# do user variables
+script "write_vars" do
+  interpreter "bash"
+  user "root"
+  code <<-EOH
+  cd /root/edurange
+  mkdir variables
+  cd variables
+  mkdir users
+<% instance.variables_instance.each do |name, var| %>
+  echo "<%= name %>:<%= var.val.gsub(/\n/, "\\\\\\n") %>" >> instance 
+<% end %>
+<% instance.variables_player.each do |player, vars| %>
+<% vars.each do |name, var| %>
+  echo "<%= name %>:<%= var.val.gsub(/\n/, "\\\\\\n") %>" >> users/<%= player.login %> 
+<% end %>
+<% end %>
+  EOH
+end

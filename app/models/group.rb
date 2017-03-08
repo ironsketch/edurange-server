@@ -1,3 +1,5 @@
+require 'variable'
+
 class Group < ActiveRecord::Base
   belongs_to :scenario
   has_many :instance_groups, dependent: :destroy
@@ -11,6 +13,9 @@ class Group < ActiveRecord::Base
   after_save :update_scenario_modified
   before_destroy :instances_stopped
   after_destroy :update_scenario_modified
+  after_create :create_variable_hashes
+
+  serialize :variables
 
   def update_scenario_modified
     if self.scenario.modifiable?
@@ -40,6 +45,16 @@ class Group < ActiveRecord::Base
       end
     end
     true
+  end
+
+  def create_variable_hashes
+    self.update_attribute(:variables, { 
+      instance: {}, 
+      player: { 
+        info: {},
+        vars: {} 
+      } 
+    })
   end
 
   def user_access_to
@@ -130,6 +145,64 @@ class Group < ActiveRecord::Base
       errors.add(:instance_group, "could not create instance group: #{instance_group.errors.messages}")
     end
     return instance_group
+  end
+
+  def variable_instance_add(name, type, val)
+    if self.variables[:instance].has_key? name
+      errors.add(:variables, "alread has Instance variable '#{name}'")
+    end
+
+    if not type
+      errors.add(:variables, "must specity Instance variable type")
+    end
+
+    return false if errors.any?
+
+    self.variables[:instance][name] = Variable.new(type, val) 
+
+    self.save
+  end
+
+  def variable_player_add(name, type, val)
+    puts self.instances
+    if self.variables[:player][:info].has_key? name
+      errors.add(:variables, "alread has Instance variable '#{name}'")
+    end
+
+    if not type
+      errors.add(:variables, "must specity Instance variable type")
+    end
+
+    return false if errors.any?
+
+    self.variables[:player][:info][name] = { type: type, val: val }
+
+    self.players.each do |player|
+      if not self.variables[:player][:vars].has_key? player
+        self.variables[:player][:vars][player] = {}
+      end
+      self.variables[:player][:vars][player][name] = Variable.new(type, val)
+    end
+
+    self.save
+  end
+
+  def variable_player_update(player)
+    if not self.variables[:player][:vars].has_key? player
+      self.variables[:player][:vars][player] = {}
+    end
+    self.variables[:player][:info].each do |name, hash|
+      self.variables[:player][:vars][player][name] = Variable.new(hash[:type], hash[:val])
+    end
+    self.save
+  end
+
+  def variable_player_remove(player)
+    if not self.variables[:player][:vars].has_key? player
+      return
+    end
+    self.variables[:player][:vars].delete(player)
+    self.save
   end
 
 end
