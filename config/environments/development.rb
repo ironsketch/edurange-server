@@ -28,6 +28,9 @@ Rails.application.configure do
     enable_starttls_auto: true
   }
 
+  # Rotate log file after 10MB
+  config.logger = Logger.new("log/#{Rails.env}.log", 50, 10240000)
+
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
 
