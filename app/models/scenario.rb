@@ -44,7 +44,7 @@ class Scenario < ActiveRecord::Base
 
   # Callbacks
   # http://guides.rubyonrails.org/active_record_callbacks.html
-  after_create :get_aws_prefixes, :create_statistic
+  after_create :get_aws_prefixes, :create_statistic, :modifiable_check
   before_destroy :validate_stopped, :save_questions_and_answers, prepend: true
 
   def get_aws_prefixes
@@ -176,6 +176,12 @@ class Scenario < ActiveRecord::Base
     path = "#{self.path}/recipes"
     FileUtils.mkdir(path) unless File.exists?(path) or not File.exists?(self.path)
     path
+  end
+
+  def modifiable_check
+    if self.test? or self.development? or self.custom?
+      self.update_attribute(:modifiable, true)
+    end
   end
 
   def update_modified
