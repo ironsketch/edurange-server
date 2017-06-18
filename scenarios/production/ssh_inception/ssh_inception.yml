@@ -4,328 +4,314 @@ Description: Ssh Inception teaches students the basics of ssh, a secure a progra
   for logging into a remote machine.
 Instructions: Instruct students to connect to the first machine, and further login
   instructions will appear onscreen once connected. They can also be found in /etc/motd
-InstructionsStudent: Login to the NAT_Instance. Instructions will be displayed upon logging in and at each new checkpoint.
+InstructionsStudent: Login to the NAT_Instance. Further instructions will be found
+  there.
 Groups:
 - Name: Instructor
   Instructions: 
   Access:
-  - Instance: anon_ftp
-    Administrator: true
-    IP_Visible: true
-  - Instance: starting_line
-    Administrator: true
-    IP_Visible: true
-  - Instance: first_stop
-    Administrator: true
-    IP_Visible: true
-  - Instance: second_stop
-    Administrator: true
-    IP_Visible: true
-  - Instance: third_stop
-    Administrator: true
-    IP_Visible: true
-  - Instance: fourth_stop
-    Administrator: true
-    IP_Visible: true
-  - Instance: satan_palace
-    Administrator: true
-    IP_Visible: true
-  - Instance: fifth_stop
-    Administrator: true
-    IP_Visible: true
-  - Instance: NAT_Instance
+  - Instance: NAT
     Administrator: false
     IP_Visible: true
+  - Instance: StartingLine
+    Administrator: true
+    IP_Visible: true
+  - Instance: FirstStop
+    Administrator: true
+    IP_Visible: true
+  - Instance: SecondStop
+    Administrator: true
+    IP_Visible: true
+  - Instance: ThirdStop
+    Administrator: true
+    IP_Visible: true
+  - Instance: FourthStop
+    Administrator: true
+    IP_Visible: true
+  - Instance: FifthStop
+    Administrator: true
+    IP_Visible: true
+  - Instance: SatansPalace
+    Administrator: true
+    IP_Visible: true
+  - Instance: AnonFTP
+    Administrator: true
+    IP_Visible: false
   Users:
   - Login: instructor
     Password: vLCu3Crf
     Id: 
     UserId: 
     StudentGroupId: 
+  Variables:
+    Instance: []
+    Player: []
 - Name: Students
   Instructions: 
   Access:
-  - Instance: NAT_Instance
+  - Instance: NAT
     Administrator: false
     IP_Visible: true
+  - Instance: StartingLine
+    Administrator: false
+    IP_Visible: false
+  - Instance: FirstStop
+    Administrator: false
+    IP_Visible: false
+  - Instance: SecondStop
+    Administrator: false
+    IP_Visible: false
+  - Instance: ThirdStop
+    Administrator: false
+    IP_Visible: false
+  - Instance: FourthStop
+    Administrator: false
+    IP_Visible: false
+  - Instance: FifthStop
+    Administrator: false
+    IP_Visible: false
+  - Instance: SatansPalace
+    Administrator: false
+    IP_Visible: false
+  - Instance: AnonFTP
+    Administrator: false
+    IP_Visible: false
   Users:
   - Login: student
     Password: f26679f
     Id: 
     UserId: 
     StudentGroupId: 
-- Name: Starting_Line
-  Instructions: ''
-  Access:
-  - Instance: starting_line
-    Administrator: false
-    IP_Visible: true
-  Users:
-  - Login: inceptor
-    Password: readyplayerone
-    Id: 
-    UserId: 
-    StudentGroupId: 
-- Name: First_Stop
-  Instructions: ''
-  Access:
-  - Instance: first_stop
-    Administrator: false
-    IP_Visible: true
-  Users:
-  - Login: mal
-    Password: inception
-    Id: 
-    UserId: 
-    StudentGroupId: 
-- Name: Second_Stop
-  Instructions: ''
-  Access:
-  - Instance: second_stop
-    Administrator: false
-    IP_Visible: true
-  Users:
-  - Login: christopher
-    Password: dicaprio
-    Id: 
-    UserId: 
-    StudentGroupId: 
-- Name: Third_Stop
-  Instructions: ''
-  Access:
-  - Instance: third_stop
-    Administrator: false
-    IP_Visible: true
-  Users:
-  - Login: cobb
-    Password: pizza_wins_now
-    Id: 
-    UserId: 
-    StudentGroupId: 
-- Name: Fourth_Stop
-  Instructions: ''
-  Access:
-  - Instance: fourth_stop
-    Administrator: false
-    IP_Visible: true
-  Users:
-  - Login: toodeep
-    Password: subconcious_security
-    Id: 
-    UserId: 
-    StudentGroupId: 
-- Name: Fifth_Stop
-  Instructions: ''
-  Access:
-  - Instance: fifth_stop
-    Administrator: false
-    IP_Visible: true
-  Users:
-  - Login: neo
-    Password: red_pill
-    Id: 
-    UserId: 
-    StudentGroupId: 
-- Name: Satans_Palace
-  Instructions: ''
-  Access:
-  - Instance: satan_palace
-    Administrator: false
-    IP_Visible: true
-  Users:
-  - Login: satan
-    Password: hell_is_the_deepest_level
-    Id: 
-    UserId: 
-    StudentGroupId: 
+  Variables:
+    Instance:
+    - Name: fifth_stop_password_key
+      Type: string
+      Value: 8fddakjfds0s9f
+    Player:
+    - Name: third_stop_private_key
+      Type: openssl_pkey_rsa
+      Value: 
+    - Name: fourth_stop_password
+      Type: random
+      Value: 
+    - Name: fifth_stop_password
+      Type: random
+      Value: 
+    - Name: satans_palace_password
+      Type: random
+      Value: 
+    - Name: secret_starting_line
+      Type: random
+      Value: 
+    - Name: secret_first_stop
+      Type: random
+      Value: 
+    - Name: secret_second_stop
+      Type: random
+      Value: 
+    - Name: secret_third_stop
+      Type: random
+      Value: 
+    - Name: secret_fourth_stop
+      Type: random
+      Value: 
+    - Name: secret_fifth_stop
+      Type: random
+      Value: 
+    - Name: master_string
+      Type: random
+      Value: 
 Clouds:
-- Name: Cloud_1
+- Name: Cloud1
   CIDR_Block: 10.0.0.0/16
   Subnets:
-  - Name: NAT_Subnet
+  - Name: SubnetNAT
     CIDR_Block: 10.0.129.0/24
     Internet_Accessible: true
     Instances:
-    - Name: NAT_Instance
+    - Name: NAT
       OS: nat
       IP_Address: 10.0.129.5
+      IP_Address_Dynamic: 
       Internet_Accessible: true
       Roles:
       - NAT
-  - Name: Player_Subnet
+  - Name: PlayerSubnet
     CIDR_Block: 10.0.0.0/27
     Internet_Accessible: false
     Instances:
-    - Name: starting_line
+    - Name: StartingLine
       OS: ubuntu
       IP_Address: 10.0.0.5
+      IP_Address_Dynamic: 
       Internet_Accessible: false
       Roles:
-      - Starting_Line_Role
-      - Net_Tools
-    - Name: first_stop
+      - StartingLine
+      - NetTools
+    - Name: FirstStop
       OS: ubuntu
       IP_Address: 10.0.0.7
+      IP_Address_Dynamic: 
       Internet_Accessible: false
       Roles:
-      - First_Stop_Role
-      - Net_Tools
-    - Name: second_stop
+      - FirstStop
+      - NetTools
+    - Name: SecondStop
       OS: ubuntu
       IP_Address: 10.0.0.10
+      IP_Address_Dynamic: 
       Internet_Accessible: false
       Roles:
-      - Second_Stop_Role
-      - Net_Tools
-    - Name: satan_palace
+      - SecondStop
+      - NetTools
+    - Name: ThirdStop
       OS: ubuntu
       IP_Address: 10.0.0.13
+      IP_Address_Dynamic: 
       Internet_Accessible: false
       Roles:
-      - Satan_Role
-    - Name: third_stop
-      OS: ubuntu
-      IP_Address: 10.0.0.15
-      Internet_Accessible: false
-      Roles:
-      - Third_Stop_Role
-      - Net_Tools
-    - Name: fourth_stop
+      - ThirdStop
+      - NetTools
+    - Name: FourthStop
       OS: ubuntu
       IP_Address: 10.0.0.16
+      IP_Address_Dynamic: 
       Internet_Accessible: false
       Roles:
-      - Fourth_Stop_Role
-      - Net_Tools
-    - Name: fifth_stop
+      - FourthStop
+      - NetTools
+    - Name: FifthStop
       OS: ubuntu
       IP_Address: 10.0.0.17
+      IP_Address_Dynamic: 
       Internet_Accessible: false
       Roles:
-      - Fifth_Stop_Role
-      - Net_Tools
-    - Name: anon_ftp
+      - FifthStop
+      - NetTools
+    - Name: SatansPalace
+      OS: ubuntu
+      IP_Address: 10.0.0.19
+      IP_Address_Dynamic: 
+      Internet_Accessible: false
+      Roles:
+      - SatansPalace
+    - Name: AnonFTP
       OS: ubuntu
       IP_Address: 10.0.0.14
+      IP_Address_Dynamic: 
       Internet_Accessible: false
       Roles:
-      - Anon_FTP
+      - AnonFTP
 Subnets: 
 Instances: 
 Roles:
 - Name: NAT
   Packages: 
   Recipes:
-  - nat_motd
-- Name: First_Stop_Role
+  - nat
+- Name: VariablePasswords
+  Packages: 
+  Recipes:
+  - variable_passwords
+- Name: StartingLine
+  Packages: 
+  Recipes:
+  - starting_line
+- Name: FirstStop
   Packages: 
   Recipes:
   - ssh_port_123
-  - motd_first_stop
-- Name: Second_Stop_Role
+  - first_stop
+- Name: SecondStop
   Packages: 
   Recipes:
-  - second_stop_script
-  - motd_second_stop
-- Name: Starting_Line_Role
+  - second_stop
+- Name: ThirdStop
   Packages: 
   Recipes:
-  - motd_starting_line
-- Name: Anon_FTP
-  Packages: 
-  Recipes:
-  - anon_ftp
-- Name: Fourth_Stop_Role
+  - third_stop
+- Name: FourthStop
   Packages: 
   Recipes:
   - fourth_stop
-  - motd_fourth_stop
-- Name: Third_Stop_Role
+- Name: FifthStop
   Packages: 
   Recipes:
-  - third_stop_script
-  - too_man_dirs
-  - motd_third_stop
-- Name: Fifth_Stop_Role
-  Packages: 
-  Recipes:
-  - fifth_stop_script
-  - motd_fifth_stop
-- Name: Satan_Role
+  - fifth_stop
+- Name: SatansPalace
   Packages: 
   Recipes:
   - ssh_port_666
-  - motd_satan_palace
-  - satan_get_out
-  - satans_flag_script
-- Name: Net_Tools
+  - satans_palace
+- Name: AnonFTP
+  Packages: 
+  Recipes:
+  - anon_ftp
+- Name: NetTools
   Packages:
   - nmap
-  Recipes:
-  - no_bash_history
+  Recipes: 
 Scoring:
-- Text: What is the password to Starting Line?
+- Text: Contents of the file '~/secret' on Starting Line?
   Type: String
-  Options: []
+  Options:
+  - variable-group-player
   Values:
-  - Value: readyplayerone
+  - Value: Students:secret_starting_line
     Points: '1'
   Order: 1
   Points: 1
-- Text: What is the password to First Stop?
+- Text: Contents of the file '~/secret' on First Stop?
   Type: String
-  Options: []
+  Options:
+  - variable-group-player
   Values:
-  - Value: inception
+  - Value: Students:secret_first_stop
     Points: '1'
   Order: 2
   Points: 1
-- Text: What is the password to Second Stop?
+- Text: Contents of the file '~/secret' on Second Stop?
   Type: String
-  Options: []
+  Options:
+  - variable-group-player
   Values:
-  - Value: dicaprio
+  - Value: Students:secret_second_stop
     Points: '1'
   Order: 3
   Points: 1
-- Text: What is the password to Third Stop?
+- Text: Contents of the file '~/secret' on Third Stop?
   Type: String
-  Options: []
+  Options:
+  - variable-group-player
   Values:
-  - Value: pizza_wins_now
+  - Value: Students:secret_third_stop
     Points: '1'
   Order: 4
   Points: 1
-- Text: What is the password to Fourth Stop?
+- Text: Contents of the file '~/secret' on Fourth Stop?
   Type: String
-  Options: []
+  Options:
+  - variable-group-player
   Values:
-  - Value: subconcious_security
+  - Value: Students:secret_fourth_stop
     Points: '1'
   Order: 5
   Points: 1
-- Text: What is the password to Fifth Stop?
+- Text: Contents of the file '~/secret' on Fifth Stop?
   Type: String
-  Options: []
+  Options:
+  - variable-group-player
   Values:
-  - Value: red_pill
+  - Value: Students:secret_fifth_stop
     Points: '1'
   Order: 6
   Points: 1
-- Text: What is the password to Satan's Palace?
+- Text: Proof that your are a SSH Inception Master?
   Type: String
-  Options: []
+  Options:
+  - variable-group-player
   Values:
-  - Value: hell_is_the_deepest_level
+  - Value: Students:master_string
     Points: '1'
   Order: 7
-  Points: 1
-- Text: What is the decrypted string of the file 'final_flag' on Satan's palace?
-  Type: String
-  Options: []
-  Values:
-  - Value: If youve dropped a shell and are reading this, youve defeated the final
-      enemy and won the game. Congratulations.
-    Points: '1'
-  Order: 8
   Points: 1
