@@ -118,7 +118,21 @@ class Scenario < ActiveRecord::Base
           "UserId" => p.user_id,
           "StudentGroupId" => p.student_group_id
           } 
-        }
+        },
+        # I haven't significantly tested this Variables section.
+        # I'm not sure why "Instances > Type/Value" only accepted .type
+        #   while "Player > Type/Value" only accepted [:type]
+        # Both are accessing a Variable (lib/variable.rb)
+        # That might be a section of future issues.
+        "Variables" => group.variables.empty? ? nil : {"Instance" => group.variables[:instance].map { |i| {
+             "Name" => i.at(0),
+             "Type" => i.at(1).type,
+             "Value" => i.at(1).val
+          }}}.merge!({"Player" => group.variables[:player][:info].map { |p| {
+            "Name" => p.at(0),
+            "Type" => p.at(1)[:type],
+            "Value" => p.at(1)[:val]
+            }}})
       }
     }
 
@@ -148,7 +162,7 @@ class Scenario < ActiveRecord::Base
         "Text" => question.text,
         "Type" => question.type_of,
         "Options" => question.options,
-        "Values" => question.values == nil ? nil : question.values.map { |vals| { "Value" => vals[:special] == '' ? vals[:value] : vals[:special], "Points" => vals[:points] } },
+        "Values" => question.values == nil ? nil : question.values.map { |vals| { "Value" => vals[:special] == '' || vals[:special] == nil ? vals[:value] : vals[:special], "Points" => vals[:points] } },
         "Order" => question.order,
         "Points" => question.points
       }
