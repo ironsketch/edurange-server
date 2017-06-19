@@ -84,7 +84,7 @@ class Group < ActiveRecord::Base
 
         player = self.players.new(
           login: login,
-          password: SecureRandom.hex[0..10],
+          password: SecureRandom.hex(4),
           user_id: student_group_user.user.id,
           student_group_id: student_group_user.student_group.id
         )
