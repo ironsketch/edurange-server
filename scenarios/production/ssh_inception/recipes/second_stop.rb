@@ -19,7 +19,7 @@ message=$(cat << "EOF"
 SSH a level deeper if you dare. This time no password is provided. 
 However, you might find the file id_rsa helpful...
 
-Helpful commands: nmap, ssh, ftp - ls, get, help
+Helpful commands: nmap, ssh, ls, get, help
 
 ****************************************************************************************************
 
