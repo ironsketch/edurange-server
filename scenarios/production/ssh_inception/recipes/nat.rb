@@ -7,14 +7,14 @@ message=$(cat << "EOF"
                    ___                                          ___                       
                   (   )        .-.                             (   )   .-.                
     .--.     .--.  | | .-.    ( __)___ .-.  .--.    .--.   .-.. | |_  ( __).--. ___ .-.   
-  /  _  \  /  _  \ | |/   \   (''"(   )   \/    \  /    \ /    (   __)(''"/    (   )   \  
+  /  _  \\  /  _  \\ | |/   \\   (''"(   )   \\/    \\  /    \\ /    (   __)(''"/    (   )   \\  
  . .' `. ;. .' `. ;|  .-. .    | | |  .-. |  .-. ;|  .-. ' .-,  | |    | |  .-. |  .-. .  
  | '   | || '   | || |  | |    | | | |  | |  |(___|  | | | |  . | | ___| | |  | | |  | |  
- _\_`.(____\_`.(___| |  | |    | | | |  | |  |    |  |/  | |  | | |(   | | |  | | |  | |  
+ _\\_`.(____\\_`.(___| |  | |    | | | |  | |  |    |  |/  | |  | | |(   | | |  | | |  | |  
 (   ). '.(   ). '. | |  | |    | | | |  | |  | ___|  ' _.| |  | | | | || | |  | | |  | |  
- | |  `\ || |  `\ || |  | |    | | | |  | |  '(   |  .'.-| |  ' | ' | || | '  | | |  | |  
+ | |  `\\ || |  `\\ || |  | |    | | | |  | |  '(   |  .'.-| |  ' | ' | || | '  | | |  | |  
  ; '._,' '; '._,' '| |  | |    | | | |  | '  `-' |'  `-' | `-'  ' `-' ;| '  `-' | |  | |  
-  '.___.'  '.___.'(___)(___)  (___(___)(___`.__,'  `.__.'| \__.' `.__.(___`.__.(___)(___) 
+  '.___.'  '.___.'(___)(___)  (___(___)(___`.__,'  `.__.'| \\__.' `.__.(___`.__.(___)(___) 
                                                          | |                              
                                                         (___)                             
 
@@ -22,9 +22,9 @@ message=$(cat << "EOF"
 Welcome to SSH Inception. The goal is to answer all questions by exploring the local network at 10.0.0.0/27
 Your are currently at the NAT Instance your journey will begin when you login into the following address.
 
-Unless otherwise noted, you will be using the same password that brought you here.*
+Unless otherwise noted, you will be using the same password that brought you here.
 
-IP Address: 10.0.0.5
+To begin: ssh 10.0.0.5
 
 For every instance you login to you will be greeted with instructions. Each machine will give you a list of 
 useful commands to solve each challenge. Use man pages to help find useful options for commands. For example

@@ -11,8 +11,8 @@ script "anon_ftp" do
   chmod 555 /var/ftp
   pass=$(edurange-get-var instance fifth_stop_password_key)
 echo -e "ip: 10.0.0.17
-key: ${pass}" > /var/ftp/secrets
-chmod 444 /var/ftp/secrets
+key: ${pass}" > /var/ftp/hint
+chmod 444 /var/ftp/hint
   echo -e "listen=YES
 " > /etc/vsftpd.conf
   echo -e "local_enable=YES

@@ -8,7 +8,7 @@ class Variable
     when "string"
       @val = val
     when "random"
-      @val = SecureRandom.hex
+      @val = SecureRandom.hex(4)
     when "openssl_pkey_rsa"
       @val = OpenSSL::PKey::RSA.new(2048).to_pem
     end
