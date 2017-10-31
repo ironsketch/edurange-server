@@ -16,7 +16,7 @@ message=$(cat << "EOF"
 Go a level deeper. You will find the next host at 10.0.0.7. The trick is that the ssh port has been 
 changed to 123. Good luck!
 
-Helpful commands: nmap, ssh, ftp - ls, get, help
+Helpful commands: ssh, help, man
 
 ****************************************************************************************************
 
@@ -29,9 +29,9 @@ while read player; do
   chmod 404 message 
   echo 'cat message' >> .bashrc
 
-  echo $(edurange-get-var user $player secret_starting_line) > secret
-  chown $player:$player secret
-  chmod 400 secret
+  echo $(edurange-get-var user $player secret_starting_line) > flag
+  chown $player:$player flag
+  chmod 400 flag
 
 done </root/edurange/players
   EOH

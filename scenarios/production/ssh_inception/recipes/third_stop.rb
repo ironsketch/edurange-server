@@ -27,7 +27,7 @@ It sure would take a long time to look through all of them. There has to be a be
 Even once you have the credentials (which are correct), you might have trouble logging into the 
 Forth Stop. Perhaps they are blocking your IP?
 
-Helpful commands: grep, find, cat, ssh
+Helpful commands: grep, find, cat, man, nmap
 
 ****************************************************************************************************
 
@@ -41,9 +41,9 @@ while read player; do
   chmod 404 message
   echo 'cat message' >> .bashrc
 
-  echo $(edurange-get-var user $player secret_third_stop) > secret
-  chown $player:$player secret
-  chmod 400 secret
+  echo $(edurange-get-var user $player secret_third_stop) > flag
+  chown $player:$player flag
+  chmod 400 flag
 
   # create & authorize ssh public key. delete players password
   echo -e "$(edurange-get-var user $player third_stop_private_key)" > id_rsa

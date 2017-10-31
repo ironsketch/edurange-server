@@ -73,9 +73,6 @@ Groups:
   - Instance: SatansPalace
     Administrator: false
     IP_Visible: false
-  - Instance: AnonFTP
-    Administrator: false
-    IP_Visible: false
   Users:
   - Login: student
     Password: f26679f

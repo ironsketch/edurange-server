@@ -16,7 +16,7 @@ You know where you hope this train will take you, but you don't know for sure."
 
 You found it. Well done. The next dream machine lies just a few addresses higher on your subnet.
 
-Helpful commands: ifconfig, nmap, ssh
+Helpful commands: ifconfig, nmap, ssh, man
 
 **************************************************************************************************
 
@@ -29,9 +29,9 @@ while read player; do
   chmod 404 message
   echo 'cat message' >> .bashrc
 
-  echo $(edurange-get-var user $player secret_first_stop) > secret
-  chown $player:$player secret
-  chmod 400 secret
+  echo $(edurange-get-var user $player secret_first_stop) > flag
+  chown $player:$player flag
+  chmod 400 flag
 done </root/edurange/players
 EOH
 end

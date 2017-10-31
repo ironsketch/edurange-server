@@ -39,9 +39,9 @@ while read player; do
   chown $player:$player betcha_cant_read_me
   chmod 400 betcha_cant_read_me
 
-  echo $(edurange-get-var user $player secret_fifth_stop) > secret
-  chown $player:$player secret
-  chmod 400 secret
+  echo $(edurange-get-var user $player secret_fifth_stop) > flag
+  chown $player:$player flag
+  chmod 400 flag
 done </root/edurange/players
   EOH
 end

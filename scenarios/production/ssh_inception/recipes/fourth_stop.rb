@@ -24,9 +24,10 @@ message=$(cat << "EOF"
 one-seventh human time. So y'know, every day here is like a minute. It's like Inception, Morty, so 
 if it's confusing and stupid, then so is everyone's favorite movie."
 
-There is loose ftp server on the network which might contain some useful credentials...
+There is loose ftp server on the network. Find some useful credentials there to to help
+decrypt your next password. Read the ftp man page!
 
-Helpful commands: nmap, ssh, ftp - ls, get, help
+Helpful commands: nmap, ftp - ls, man
 
 ****************************************************************************************************
 
@@ -54,13 +55,15 @@ while read player; do
 
   echo -e "#!/bin/bash
 openssl aes-256-cbc -d -in encryptedpassword -out password
-chmod 400 password
-cat password" > decryptpass
+if [ $? > 0 ]; then
+  chmod 400 password
+  cat password
+fi" > decryptpass
   chmod 505 decryptpass
 
-  echo $(edurange-get-var user $player secret_fourth_stop) > secret
-  chown $player:$player secret
-  chmod 400 secret
+  echo $(edurange-get-var user $player secret_fourth_stop) > flag
+  chown $player:$player flag
+  chmod 400 flag
 done </root/edurange/players
 
 # block traffic from ThirdStop. players must find a way around this
