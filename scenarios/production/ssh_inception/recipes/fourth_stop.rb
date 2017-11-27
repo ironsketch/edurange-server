@@ -27,6 +27,9 @@ if it's confusing and stupid, then so is everyone's favorite movie."
 There is loose ftp server on the network. Find some useful credentials there to to help
 decrypt your next password. Read the ftp man page!
 
+(The file on the ftp server will give you credentials to use when running decryptpass. The files
+in this directory will not help you get to the ftp server.)
+
 Helpful commands: nmap, ftp - ls, man
 
 ****************************************************************************************************
@@ -67,6 +70,6 @@ fi" > decryptpass
 done </root/edurange/players
 
 # block traffic from ThirdStop. players must find a way around this
-iptables -A INPUT -s 10.0.0.15 -j DROP
+iptables -A INPUT -s 10.0.0.13 -j DROP
 EOH
 end

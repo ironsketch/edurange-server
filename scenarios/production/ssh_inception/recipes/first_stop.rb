@@ -16,7 +16,7 @@ You know where you hope this train will take you, but you don't know for sure."
 
 You found it. Well done. The next dream machine lies just a few addresses higher on your subnet.
 
-Helpful commands: ifconfig, nmap, ssh, man
+Helpful commands: ifconfig, nmap, ssh, man, ping
 
 **************************************************************************************************
 
