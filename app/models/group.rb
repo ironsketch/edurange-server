@@ -110,7 +110,7 @@ class Group < ActiveRecord::Base
     student_group.student_group_users.each do |student_group_user|
       if player = self.players.find_by_user_id(student_group_user.user.id)
         players.push(player)
-        player.delete
+        player.destroy
       end
     end
     self.update_scenario_modified
